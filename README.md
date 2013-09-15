@@ -21,7 +21,6 @@ Usage : yfm-cli clear            -- clears the DB
         yfm-cli sync             -- fetches symbol data according to the defined
                                     start date and end date
         yfm-cli info             -- prints out admin info and symbols
-        yfm-cli set-start <date> -- set the start date
-        yfm-cli set-end <date>   -- set the end date
-
+        yfm-cli set-start <date> -- sets the start date
+        yfm-cli set-end <date>   -- sets the end date
 ```
