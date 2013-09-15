@@ -26,6 +26,17 @@ class yfmAdmin:
   def __init__(self, dbClient):
         self.yfdb = dbClient[self.DATABASE_NAME];
 
+  #
+  # Returns the admin row defining the content, found in the db.admin collection.
+  # If it is not found means the environment is not reliable.
+  #
+  def _getAdminDocument (self):
+    row = self.yfdb.admin.find({'type':'content'})
+    if row.count() == 0:
+      return None
+    else:
+      return next(row)
+
   def clear (self):
       print "Removing all collections [admin, data, symbols] ... done";
       self.yfdb.admin.remove();
@@ -38,20 +49,20 @@ class yfmAdmin:
       self.yfdb.admin.insert ({'type':'content', 'startDate':'', 'endDate':'', 'lastUpdate':'', 'consistent':1});
 
   def add (self, value):
-      exists = self.yfdb.symbols.find ({'symb':value}).count()
+      exists = self.yfdb.symbols.find ({'sym':value}).count()
       if exists:
         print "Error: symbol'" + value + "' already in the database"
       else:
-        self.yfdb.symbols.insert ({'symb':value});
+        self.yfdb.symbols.insert ({'sym':value});
         print "'" + value + "'" + " added to the database"
 
   def remove (self, value):
-      exists = self.yfdb.symbols.find({'symb': value}).count();
+      exists = self.yfdb.symbols.find({'sym': value}).count();
       if not exists:
         print "Error: symbol'" + value + "' not in the database"
       else:
-        self.yfdb.symbols.remove ({'symb':value});
-        self.yfdb.timeline.remove ({'symb':value});
+        self.yfdb.symbols.remove ({'sym':value});
+        self.yfdb.timeline.remove ({'sym':value});
         print "'" + value + "'" + " removed from the database"
 
   #
@@ -60,11 +71,10 @@ class yfmAdmin:
   # for each one of the symbols in the database.
   #
   def sync (self):
-    row = self.yfdb.admin.find({'type':'content'})
-    if (row.count () == 0):
+    adminReg = self._getAdminDocument()
+    if adminReg == None:
       print "Error: admin info (startDate, endDate) couldn't be found. Run 'create' option"
     else:
-      adminReg = row[0];
       startDateStr = adminReg['startDate']
       endDateStr = adminReg['endDate']
       if not startDateStr:
@@ -79,14 +89,14 @@ class yfmAdmin:
         print "Error: start date more recent than end date. Sync stopped"
       symbols = []
       for symb in self.yfdb.symbols.find():
-        symbols.append(symb['symb']);
+        symbols.append(symb['sym']);
       days = (endDate-startDate).days
       symbs = len(symbols)
       print "Total: " + str(days * symbs) + " rows (" + str(days) + " days for " + str(symbs) + " symbols) " \
           + "between " + startDateStr + " and " + endDateStr + " ..."
       yfetcher = YFinanceFetcher()
       for symbol in symbols:
-        self.yfdb.timeline.remove ({'symb':symbol});
+        self.yfdb.timeline.remove ({'sym':symbol});
         data = yfetcher.getHistAsJson(symbol, startDateStr, endDateStr, 'd+v')
         for entry in data:
           self.yfdb.timeline.insert(entry)
@@ -97,11 +107,10 @@ class yfmAdmin:
   # and the symbols contained in the database
   #
   def info (self):
-    row = self.yfdb.admin.find({'type':'content'})
-    if (row.count () == 0):
+    adminReg = self._getAdminDocument()
+    if adminReg == None:
       print "Error: admin info (startDate, endDate) couldn't be found. Run 'create' option"
     else:
-      adminReg = row[0];
       startDateStr = adminReg['startDate']
       endDateStr = adminReg['endDate']
       print "Start date: " + startDateStr
@@ -110,4 +119,35 @@ class yfmAdmin:
       print "Timeline size: " + str(self.yfdb.timeline.find().count())
       print "Symbols: " + str(symbols.count())
       for symb in symbols:
-        print " # " + symb['symb']
+        print " # " + symb['sym']
+
+  #
+  # Sets the start date (only if the format is correct: dd/mm/yyyy)
+  #
+  def setStart (self, startDate):
+    adminReg = self._getAdminDocument()
+    if adminReg == None:
+      print "Error: admin info couldn't be found. Run 'create' option"
+    else:
+      date = None
+      try:
+        date = datetime.strptime(startDate, "%d/%m/%Y")
+        self.yfdb.admin.update (adminReg, { "$set":{ "startDate": startDate} });
+        print "Start date set to " + startDate
+      except ValueError:
+        print "Error: invalid start date format (expected dd/mm/yyyy)"
+  #
+  # Sets the end date (only if the format is correct: dd/mm/yyyy)
+  #
+  def setEnd (self, endDate):
+    adminReg = self._getAdminDocument()
+    if adminReg == None:
+      print "Error: admin info couldn't be found. Run 'create' option"
+    else:
+      date = None
+      try:
+        date = datetime.strptime(endDate, "%d/%m/%Y")
+        self.yfdb.admin.update (adminReg, { "$set":{ "endDate": endDate} });
+        print "End date set to " + endDate
+      except ValueError:
+        print "Error: invalid end date format (expected dd/mm/yyyy)"

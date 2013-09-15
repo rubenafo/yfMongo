@@ -26,13 +26,15 @@ from yfmAdmin import yfmAdmin
 # Help message when no valid options are provided
 #
 def showHelp ():
-    print "Usage : yfm-cli clear          -- clears the DB"
-    print "        yfm-cli create         -- cleans AND creates the base structure"
-    print "        yfm-cli add <stock>    -- adds a stock to the db"
-    print "        yfm-cli remove <stock> -- removes a stock from the db"
-    print "        yfm-cli sync           -- fetches symbol data according the defined"
-    print "                                  start date and end date"
-    print "        yfm-cli info           -- prints out admin info and symbols"
+    print "Usage : yfm-cli clear            -- clears the DB"
+    print "        yfm-cli create           -- clears AND creates the base structure"
+    print "        yfm-cli add <stock>      -- adds a stock to the db"
+    print "        yfm-cli remove <stock>   -- removes a stock from the db"
+    print "        yfm-cli sync             -- fetches symbol data according to the defined"
+    print "                                    start date and end date"
+    print "        yfm-cli info             -- prints out admin info and symbols"
+    print "        yfm-cli set-start <date> -- set the start date"
+    print "        yfm-cli set-end <date>   -- set the end date"
 
 # end showHelp
 
@@ -67,12 +69,21 @@ if numParams == 2:
       exit()
 
 if numParams == 3:
+    secondParam = sys.argv[2]
     if firstParam == "add":
-      moAdmin.add(sys.argv[2])
+      moAdmin.add(secondParam)
       exit()
     if firstParam == "remove":
-      moAdmin.remove (sys.argv[2])
+      moAdmin.remove (secondParam)
+      exit()
+    if firstParam == "set-start":
+      moAdmin.setStart (secondParam);
+      exit()
+    if firstParam == "set-end":
+      moAdmin.setEnd (secondParam);
       exit()
     showHelp()
+
+showHelp()
 
 # end main
