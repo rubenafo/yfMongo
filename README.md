@@ -20,6 +20,7 @@ Usage : yfm-cli clear            -- clears the DB
         yfm-cli remove <stock>   -- removes a stock from the db
         yfm-cli sync             -- fetches symbol data according to the defined
                                     start date and end date
+        yfm-cli fetch <date>     -- fetches all symbols for given date
         yfm-cli info             -- prints out admin info and symbols
         yfm-cli set-start <date> -- sets the start date
         yfm-cli set-end <date>   -- sets the end date
