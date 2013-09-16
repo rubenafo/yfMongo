@@ -32,9 +32,10 @@ def showHelp ():
     print "        yfm-cli remove <stock>   -- removes a stock from the db"
     print "        yfm-cli sync             -- fetches symbol data according to the defined"
     print "                                    start date and end date"
+    print "        yfm-cli fetch <date>     -- fetches all symbols for given date"
     print "        yfm-cli info             -- prints out admin info and symbols"
-    print "        yfm-cli set-start <date> -- set the start date"
-    print "        yfm-cli set-end <date>   -- set the end date"
+    print "        yfm-cli set-start <date> -- sets the start date"
+    print "        yfm-cli set-end <date>   -- sets the end date"
 
 # end showHelp
 
@@ -70,6 +71,9 @@ if numParams == 2:
 
 if numParams == 3:
     secondParam = sys.argv[2]
+    if firstParam == "fetch":
+      moAdmin.fetch(secondParam)
+      exit()
     if firstParam == "add":
       moAdmin.add(secondParam)
       exit()

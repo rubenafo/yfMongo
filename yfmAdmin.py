@@ -151,3 +151,38 @@ class yfmAdmin:
         print "End date set to " + endDate
       except ValueError:
         print "Error: invalid end date format (expected dd/mm/yyyy)"
+
+  #
+  # Fetches all symbols for provided date
+  #
+  def fetch (self, targetDate):
+    adminReg = self._getAdminDocument()
+    if adminReg == None:
+      print "Error: admin info couldn't be found. Run 'create' option"
+    else:
+      date = None
+      try:
+        date = datetime.strptime(targetDate, "%d/%m/%Y")
+        startDateStr = adminReg['startDate']
+        endDateStr = adminReg['endDate']
+        if not startDateStr:
+          print "Error: start date not set. Sync stopped"
+          return
+        if not endDateStr:
+          print "Error: end date not set. Sync stopped"
+          return
+        startDate = datetime.strptime(startDateStr, "%d/%m/%Y")
+        endDate = datetime.strptime(endDateStr, "%d/%m/%Y")
+        if (date < startDate):
+          self.yfdb.admin.update (adminReg, { "$set":{ "startDate": targetDate} });
+        if (date > endDate):
+          self.yfdb.admin.update (adminReg, { "$set":{ "endDate": targetDate} });
+        yfetcher = YFinanceFetcher()
+        symbols = self.yfdb.symbols.find()
+        for symbol in symbols:
+          data = yfetcher.getHistAsJson(symbol['sym'], targetDate, targetDate, 'd+v')
+          print "Adding '" + targetDate + "' data for symbol '" + symbol['sym'] + "'"
+          for entry in data:
+            self.yfdb.timeline.insert(entry)
+      except ValueError:
+        print "Error: invalid provided date format (expected dd/mm/yyyy)"
