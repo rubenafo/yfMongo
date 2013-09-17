@@ -14,14 +14,15 @@ stock information, the symbols in the database and their time window.
 ### Usage
 The command line help shows the available functionality:
 ```
-Usage : yfm-cli clear            -- clears the DB
-        yfm-cli create           -- clears AND creates the base structure
-        yfm-cli add <stock>      -- adds a stock to the db
-        yfm-cli remove <stock>   -- removes a stock from the db
-        yfm-cli sync             -- fetches symbol data according to the defined
-                                    start date and end date
-        yfm-cli fetch <date>     -- fetches all symbols for given date
-        yfm-cli info             -- prints out admin info and symbols
-        yfm-cli set-start <date> -- sets the start date
-        yfm-cli set-end <date>   -- sets the end date
+Usage : yfm-cli clear                -- clears the DB
+        yfm-cli create               -- clears AND creates the base structure
+        yfm-cli add <stock>          -- adds a stock to the db
+        yfm-cli remove <stock>       -- removes a stock from the db
+        yfm-cli sync                 -- fetches symbol data according to the defined
+                                        start date and end date
+        yfm-cli fetch <date>         -- fetches all symbols for given date
+        yfm-cli fetch <start> <end>  -- fetches data between both dates
+        yfm-cli info                 -- prints out admin info and symbols
+        yfm-cli set-start <date>     -- sets the start date
+        yfm-cli set-end <date>       -- sets the end date
 ```
