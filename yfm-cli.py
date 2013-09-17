@@ -26,16 +26,15 @@ from yfmAdmin import yfmAdmin
 # Help message when no valid options are provided
 #
 def showHelp ():
-    print "Usage : yfm-cli clear            -- clears the DB"
-    print "        yfm-cli create           -- clears AND creates the base structure"
-    print "        yfm-cli add <stock>      -- adds a stock to the db"
-    print "        yfm-cli remove <stock>   -- removes a stock from the db"
-    print "        yfm-cli sync             -- fetches symbol data according to the defined"
-    print "                                    start date and end date"
-    print "        yfm-cli fetch <date>     -- fetches all symbols for given date"
-    print "        yfm-cli info             -- prints out admin info and symbols"
-    print "        yfm-cli set-start <date> -- sets the start date"
-    print "        yfm-cli set-end <date>   -- sets the end date"
+    print "Usage : yfm-cli clear                -- clears the DB"
+    print "        yfm-cli create               -- clears AND creates the base structure"
+    print "        yfm-cli add <stock>          -- adds a stock to the db"
+    print "        yfm-cli remove <stock>       -- removes a stock from the db"
+    print "        yfm-cli sync                 -- fetches symbol data according to the defined"
+    print "                                        start date and end date"
+    print "        yfm-cli fetch <date>         -- fetches all symbols for given date"
+    print "        yfm-cli fetch <start> <end>  -- fetches data between both dates"
+    print "        yfm-cli info                 -- prints out admin info and symbols"
 
 # end showHelp
 
@@ -87,6 +86,13 @@ if numParams == 3:
       moAdmin.setEnd (secondParam);
       exit()
     showHelp()
+
+if numParams == 4:
+    if firstParam == "fetch":
+      startDate = sys.argv[2]
+      endDate = sys.argv[3]
+      moAdmin.fetchInterval (startDate, endDate)
+      exit()
 
 showHelp()
 
