@@ -23,6 +23,4 @@ Usage : yfm-cli clear                -- clears the DB
         yfm-cli fetch <date>         -- fetches all symbols for given date
         yfm-cli fetch <start> <end>  -- fetches data between both dates
         yfm-cli info                 -- prints out admin info and symbols
-        yfm-cli set-start <date>     -- sets the start date
-        yfm-cli set-end <date>       -- sets the end date
 ```

@@ -39,7 +39,7 @@ def showHelp ():
 # end showHelp
 
 client = MongoClient('localhost', 27017)
-moAdmin = yfmAdmin(client)
+moAdmin = yfmAdmin(client, "yf-mongo")
 
 numParams = len(sys.argv)
 if numParams == 1: # no args
@@ -78,12 +78,6 @@ if numParams == 3:
       exit()
     if firstParam == "remove":
       moAdmin.remove (secondParam)
-      exit()
-    if firstParam == "set-start":
-      moAdmin.setStart (secondParam);
-      exit()
-    if firstParam == "set-end":
-      moAdmin.setEnd (secondParam);
       exit()
     showHelp()
 

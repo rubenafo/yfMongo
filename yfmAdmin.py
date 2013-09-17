@@ -23,8 +23,8 @@ class yfmAdmin:
   DATABASE_NAME = "yf-mongo";
   yfdb = None;
 
-  def __init__(self, dbClient):
-        self.yfdb = dbClient[self.DATABASE_NAME];
+  def __init__(self, dbClient, databaseName):
+    self.yfdb = dbClient[databaseName];
 
   #
   # Returns the admin row defining the content, found in the db.admin collection.
@@ -120,37 +120,6 @@ class yfmAdmin:
       print "Symbols: " + str(symbols.count())
       for symb in symbols:
         print " # " + symb['sym']
-
-  #
-  # Sets the start date (only if the format is correct: dd/mm/yyyy)
-  #
-#  def setStart (self, startDate):
- #   adminReg = self._getAdminDocument()
-  #  if adminReg == None:
-   #   print "Error: admin info couldn't be found. Run 'create' option"
-    #else:
-     # date = None
-      #try:
-       # date = datetime.strptime(startDate, "%d/%m/%Y")
-        #self.yfdb.admin.update (adminReg, { "$set":{ "startDate": startDate} });
-       # print "Start date set to " + startDate
-     # except ValueError:
-    #    print "Error: invalid start date format (expected dd/mm/yyyy)"
-  ##
-  # Sets the end date (only if the format is correct: dd/mm/yyyy)
-  #
-#  def setEnd (self, endDate):
- #   adminReg = self._getAdminDocument()
-  #  if adminReg == None:
-   #   print "Error: admin info couldn't be found. Run 'create' option"
-    #else:
-     # date = None
-      #try:
-       # date = datetime.strptime(endDate, "%d/%m/%Y")
-        #self.yfdb.admin.update (adminReg, { "$set":{ "endDate": endDate} });
-#        print "End date set to " + endDate
- #     except ValueError:
-  #      print "Error: invalid end date format (expected dd/mm/yyyy)"
 
   #
   # Fetches all symbols for provided date
