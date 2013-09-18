@@ -29,6 +29,7 @@ def showHelp ():
     print "Usage : yfm-cli clear                -- clears the DB"
     print "        yfm-cli create               -- clears AND creates the base structure"
     print "        yfm-cli add <stock>          -- adds a stock to the db"
+    print "        yfm-cli load-symbols <file>  -- loads symbols from file"
     print "        yfm-cli remove <stock>       -- removes a stock from the db"
     print "        yfm-cli sync                 -- fetches symbol data according to the defined"
     print "                                        start date and end date"
@@ -79,6 +80,9 @@ if numParams == 3:
     if firstParam == "remove":
       moAdmin.remove (secondParam)
       exit()
+    if firstParam == "load-symbols":
+      moAdmin.loadSymbols (secondParam);
+      exit();
     showHelp()
 
 if numParams == 4:

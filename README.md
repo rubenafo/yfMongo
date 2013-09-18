@@ -17,6 +17,7 @@ The command line help shows the available functionality:
 Usage : yfm-cli clear                -- clears the DB
         yfm-cli create               -- clears AND creates the base structure
         yfm-cli add <stock>          -- adds a stock to the db
+        yfm-cli load-symbols <file>  -- loads symbols from a file
         yfm-cli remove <stock>       -- removes a stock from the db
         yfm-cli sync                 -- fetches symbol data according to the defined
                                         start date and end date

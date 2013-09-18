@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import sys
+import re
 from datetime import datetime, date, time
 sys.path.append("yfinancefetcher")
 from yfinancefetcher import *
@@ -182,4 +183,14 @@ class yfmAdmin:
             self.yfdb.timeline.insert(entry)
       except ValueError:
         print "Error: invalid provided date format (expected dd/mm/yyyy)"
+
+  # Loads symbols from a file, separated by spaces or commas
+  def loadSymbols (self, sfile):
+    symbFile = open (sfile)
+    symbols = [];
+    lines = (line.rstrip('\n') for line in open(sfile))
+    for line in lines:
+      values = re.split(" |,", line)
+      for value in values:
+        self.add (value)
 
