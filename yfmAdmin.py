@@ -47,7 +47,7 @@ class yfmAdmin:
   def init (self):
       print "Initializing base structure for admin ... done";
       self.yfdb.admin.insert ({'type':'user', 'user':'admin', 'password':'', 'lastLogin':''});
-      self.yfdb.admin.insert ({'type':'content', 'startDate':'', 'endDate':'', 'lastUpdate':'', 'consistent':1});
+      self.yfdb.admin.insert ({'type':'content', 'lastUpdate':'', 'consistent':1});
 
   def add (self, value):
       exists = self.yfdb.symbols.find ({'sym':value}).count()
@@ -67,56 +67,16 @@ class yfmAdmin:
         print "'" + value + "'" + " removed from the database"
 
   #
-  # Syncs the database. Basically it reads the defined start and end
-  # dates and, if they are valid, retrieves the time window between both
-  # for each one of the symbols in the database.
-  #
-  def sync (self):
-    adminReg = self._getAdminDocument()
-    if adminReg == None:
-      print "Error: admin info (startDate, endDate) couldn't be found. Run 'create' option"
-    else:
-      startDateStr = adminReg['startDate']
-      endDateStr = adminReg['endDate']
-      if not startDateStr:
-        print "Error: start date not set. Sync stopped"
-        return
-      if not endDateStr:
-        print "Error: end date not set. Sync stopped"
-        return
-      startDate = datetime.strptime(startDateStr, "%d/%m/%Y")
-      endDate = datetime.strptime(endDateStr, "%d/%m/%Y")
-      if (startDate > endDate):
-        print "Error: start date more recent than end date. Sync stopped"
-      symbols = []
-      for symb in self.yfdb.symbols.find():
-        symbols.append(symb['sym']);
-      days = (endDate-startDate).days
-      symbs = len(symbols)
-      print "Total: " + str(days * symbs) + " rows (" + str(days) + " days for " + str(symbs) + " symbols) " \
-          + "between " + startDateStr + " and " + endDateStr + " ..."
-      yfetcher = YFinanceFetcher()
-      for symbol in symbols:
-        self.yfdb.timeline.remove ({'sym':symbol});
-        data = yfetcher.getHistAsJson(symbol, startDateStr, endDateStr, 'd+v')
-        for entry in data:
-          self.yfdb.timeline.insert(entry)
-        print "Fetched '" + symbol + "' values "
-
-  #
   # Prints information regarding the admin info (start and end dates)
   # and the symbols contained in the database
   #
   def info (self):
     adminReg = self._getAdminDocument()
     if adminReg == None:
-      print "Error: admin info (startDate, endDate) couldn't be found. Run 'create' option"
+      print "Error: admin info couldn't be found. Run 'create' option"
     else:
-      startDateStr = adminReg['startDate']
-      endDateStr = adminReg['endDate']
-      print "Start date: " + startDateStr
-      print "End date: " + endDateStr
       symbols = self.yfdb.symbols.find();
+      print "Found admin info"
       print "Timeline size: " + str(self.yfdb.timeline.find().count())
       print "Symbols: " + str(symbols.count())
 
@@ -137,20 +97,6 @@ class yfmAdmin:
       date = None
       try:
         date = datetime.strptime(targetDate, "%d/%m/%Y")
-        startDateStr = adminReg['startDate']
-        endDateStr = adminReg['endDate']
-        if not startDateStr:
-          print "Error: start date not set. Sync stopped"
-          return
-        if not endDateStr:
-          print "Error: end date not set. Sync stopped"
-          return
-        startDate = datetime.strptime(startDateStr, "%d/%m/%Y")
-        endDate = datetime.strptime(endDateStr, "%d/%m/%Y")
-        if (date < startDate):
-          self.yfdb.admin.update (adminReg, { "$set":{ "startDate": targetDate} });
-        if (date > endDate):
-          self.yfdb.admin.update (adminReg, { "$set":{ "endDate": targetDate} });
         yfetcher = YFinanceFetcher()
         symbols = self.yfdb.symbols.find()
         for symbol in symbols:
@@ -170,16 +116,6 @@ class yfmAdmin:
       try:
         sdate = datetime.strptime(startDate, "%d/%m/%Y")
         edate = datetime.strptime(endDate, "%d/%m/%Y")
-        startDateStr = adminReg['startDate']
-        endDateStr = adminReg['endDate']
-        if (len(startDateStr)):
-          storedStartDate = datetime.strptime(startDateStr, "%d/%m/%Y")
-        if (len(endDateStr)):
-          storedEndDate = datetime.strptime(endDateStr, "%d/%m/%Y")
-        if (len(startDateStr) > 0 & sdate < storedStartDate):
-          self.yfdb.admin.update (adminReg, { "$set":{ "startDate": startDate} });
-        if (len(endDateStr) > 0 & edate > storedEndDate):
-          self.yfdb.admin.update (adminReg, { "$set":{ "endDate": endDate} });
         yfetcher = YFinanceFetcher()
         symbols = self.yfdb.symbols.find()
         for symbol in symbols:

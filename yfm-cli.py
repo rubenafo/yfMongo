@@ -31,8 +31,6 @@ def showHelp ():
     print "        yfm-cli add <stock>          -- adds a stock to the db"
     print "        yfm-cli load-symbols <file>  -- loads symbols from file"
     print "        yfm-cli remove <stock>       -- removes a stock from the db"
-    print "        yfm-cli sync                 -- fetches symbol data according to the defined"
-    print "                                        start date and end date"
     print "        yfm-cli fetch <date>         -- fetches all symbols for given date"
     print "        yfm-cli fetch <start> <end>  -- fetches data between both dates"
     print "        yfm-cli info                 -- prints out admin info"
@@ -50,10 +48,6 @@ if numParams == 1: # no args
 
 firstParam = sys.argv[1]
 if numParams == 2:
-    if firstParam == "sync":
-      moAdmin.sync ()
-      exit()
-
     if firstParam == "clear":
       moAdmin.clear()
       exit()

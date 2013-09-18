@@ -37,7 +37,7 @@ class YFinanceFetcher:
         table.pop(0)
 
   # Gets historical data in _table_ format.
-  # - symbol: an list of stock symbols, e.g. 'GOOG,MICRO'
+  # - symbol: a list of stock symbols, e.g. 'GOOG,MICRO'
   # - starDate: starting date, e.g 12/5/2012 for 12th of May of 2012
   # - endDate: end date
   # - info: interval time. Accepted values:

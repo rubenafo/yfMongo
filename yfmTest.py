@@ -39,5 +39,17 @@ class yfmTest (unittest.TestCase):
     self.assertTrue (self.db.timeline.find().count() == 0);
     self.assertTrue (self.db.symbols.find().count() == 0);
 
+  def test_clear(self):
+    self.admin.clear()
+    self.assertTrue (self.db.admin.find().count() == 0);
+    self.assertTrue (self.db.timeline.find().count() == 0);
+    self.assertTrue (self.db.symbols.find().count() == 0);
+
+  def test_add_stock (self):
+    self.admin.add("a")
+    self.admin.add("b")
+    self.admin.add("c")
+    self.assertTrue (self.db.symbols.find().count() == 3);
+
 if __name__ == '__main__':
       unittest.main()
