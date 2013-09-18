@@ -27,7 +27,7 @@ from yfmAdmin import yfmAdmin
 #
 def showHelp ():
     print "Usage : yfm-cli clear                -- clears the DB"
-    print "        yfm-cli create               -- clears AND creates the base structure"
+    print "        yfm-cli init                 -- clears AND creates the base structure"
     print "        yfm-cli add <stock>          -- adds a stock to the db"
     print "        yfm-cli load-symbols <file>  -- loads symbols from file"
     print "        yfm-cli remove <stock>       -- removes a stock from the db"
@@ -61,9 +61,9 @@ if numParams == 2:
       moAdmin.info()
       exit()
 
-    if firstParam == "create":
+    if firstParam == "init":
       moAdmin.clear()
-      moAdmin.create()
+      moAdmin.init()
       exit()
     else:
       showHelp()

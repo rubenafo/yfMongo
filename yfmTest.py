@@ -31,7 +31,7 @@ class yfmTest (unittest.TestCase):
   # Creates the empty database, but containing admin documents
   def setUp (self):
     self.admin.clear()
-    self.admin.create()
+    self.admin.init()
 
   # Checks the create() generates the correct structure in the db
   def test_init (self):

@@ -44,8 +44,8 @@ class yfmAdmin:
       self.yfdb.timeline.remove();
       self.yfdb.symbols.remove();
 
-  def create (self):
-      print "Creating base structure for admin ... done";
+  def init (self):
+      print "Initializing base structure for admin ... done";
       self.yfdb.admin.insert ({'type':'user', 'user':'admin', 'password':'', 'lastLogin':''});
       self.yfdb.admin.insert ({'type':'content', 'startDate':'', 'endDate':'', 'lastUpdate':'', 'consistent':1});
 
