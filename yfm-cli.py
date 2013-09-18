@@ -35,7 +35,8 @@ def showHelp ():
     print "                                        start date and end date"
     print "        yfm-cli fetch <date>         -- fetches all symbols for given date"
     print "        yfm-cli fetch <start> <end>  -- fetches data between both dates"
-    print "        yfm-cli info                 -- prints out admin info and symbols"
+    print "        yfm-cli info                 -- prints out admin info"
+    print "        yfm-cli info symbols         -- prints symbols"
 
 # end showHelp
 
@@ -79,6 +80,10 @@ if numParams == 3:
       exit()
     if firstParam == "remove":
       moAdmin.remove (secondParam)
+      exit()
+    if firstParam == "info":
+      if secondParam == "symbols":
+        moAdmin.infoSymbols ()
       exit()
     if firstParam == "load-symbols":
       moAdmin.loadSymbols (secondParam);

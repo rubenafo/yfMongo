@@ -119,8 +119,12 @@ class yfmAdmin:
       symbols = self.yfdb.symbols.find();
       print "Timeline size: " + str(self.yfdb.timeline.find().count())
       print "Symbols: " + str(symbols.count())
+
+  # Print only symbol ids
+  def infoSymbols (self):
+      symbols = self.yfdb.symbols.find();
       for symb in symbols:
-        print " # " + symb['sym']
+        print symb['sym']
 
   #
   # Fetches all symbols for provided date
@@ -168,11 +172,13 @@ class yfmAdmin:
         edate = datetime.strptime(endDate, "%d/%m/%Y")
         startDateStr = adminReg['startDate']
         endDateStr = adminReg['endDate']
-        storedStartDate = datetime.strptime(startDateStr, "%d/%m/%Y")
-        storedEndDate = datetime.strptime(endDateStr, "%d/%m/%Y")
-        if (date < startDate):
+        if (len(startDateStr)):
+          storedStartDate = datetime.strptime(startDateStr, "%d/%m/%Y")
+        if (len(endDateStr)):
+          storedEndDate = datetime.strptime(endDateStr, "%d/%m/%Y")
+        if (len(startDateStr) > 0 & sdate < storedStartDate):
           self.yfdb.admin.update (adminReg, { "$set":{ "startDate": startDate} });
-        if (date > endDate):
+        if (len(endDateStr) > 0 & edate > storedEndDate):
           self.yfdb.admin.update (adminReg, { "$set":{ "endDate": endDate} });
         yfetcher = YFinanceFetcher()
         symbols = self.yfdb.symbols.find()
