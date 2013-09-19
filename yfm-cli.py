@@ -39,7 +39,7 @@ def showHelp ():
 # end showHelp
 
 client = MongoClient('localhost', 27017)
-moAdmin = yfmAdmin(client, "yf-mongo")
+moAdmin = yfmAdmin(client, "yf-mongo", True)
 
 numParams = len(sys.argv)
 if numParams == 1: # no args

@@ -23,9 +23,15 @@ class yfmAdmin:
 
   DATABASE_NAME = "yf-mongo";
   yfdb = None;
+  verbose = False
 
-  def __init__(self, dbClient, databaseName):
+  def sprint (self, msg):
+    if self.verbose:
+      print msg
+
+  def __init__(self, dbClient, databaseName, verbose):
     self.yfdb = dbClient[databaseName];
+    self.verbose = verbose
 
   #
   # Returns the admin row defining the content, found in the db.admin collection.
@@ -39,32 +45,32 @@ class yfmAdmin:
       return next(row)
 
   def clear (self):
-      print "Removing all collections [admin, data, symbols] ... done";
+      self.sprint ("Removing all collections [admin, data, symbols] ... done")
       self.yfdb.admin.remove();
       self.yfdb.timeline.remove();
       self.yfdb.symbols.remove();
 
   def init (self):
-      print "Initializing base structure for admin ... done";
+      self.sprint ("Initializing base structure for admin ... done")
       self.yfdb.admin.insert ({'type':'user', 'user':'admin', 'password':'', 'lastLogin':''});
       self.yfdb.admin.insert ({'type':'content', 'lastUpdate':'', 'consistent':1});
 
   def add (self, value):
       exists = self.yfdb.symbols.find ({'sym':value}).count()
       if exists:
-        print "Error: symbol'" + value + "' already in the database"
+        self.sprint ("Error: symbol'" + value + "' already in the database")
       else:
         self.yfdb.symbols.insert ({'sym':value});
-        print "'" + value + "'" + " added to the database"
+        self.sprint ("'" + value + "'" + " added to the database")
 
   def remove (self, value):
       exists = self.yfdb.symbols.find({'sym': value}).count();
       if not exists:
-        print "Error: symbol'" + value + "' not in the database"
+        self.sprint ("Error: symbol'" + value + "' not in the database")
       else:
         self.yfdb.symbols.remove ({'sym':value});
         self.yfdb.timeline.remove ({'sym':value});
-        print "'" + value + "'" + " removed from the database"
+        self.sprint ("'" + value + "'" + " removed from the database")
 
   #
   # Prints information regarding the admin info (start and end dates)
@@ -92,7 +98,7 @@ class yfmAdmin:
   def fetch (self, targetDate):
     adminReg = self._getAdminDocument()
     if adminReg == None:
-      print "Error: admin info couldn't be found. Run 'create' option"
+      self.sprint ("Error: admin info couldn't be found. Run 'create' option")
     else:
       date = None
       try:
@@ -101,7 +107,7 @@ class yfmAdmin:
         symbols = self.yfdb.symbols.find()
         for symbol in symbols:
           data = yfetcher.getHistAsJson(symbol['sym'], targetDate, targetDate, 'd+v')
-          print "Adding '" + targetDate + "' data for symbol '" + symbol['sym'] + "'"
+          self.sprint ("Adding '" + targetDate + "' data for symbol '" + symbol['sym'] + "'")
           for entry in data:
             self.yfdb.timeline.insert(entry)
       except ValueError:
@@ -110,7 +116,7 @@ class yfmAdmin:
   def fetchInterval (self, startDate, endDate):
     adminReg = self._getAdminDocument()
     if adminReg == None:
-      print "Error: admin info couldn't be found. Run 'create' option"
+      self.sprint ("Error: admin info couldn't be found. Run 'create' option")
     else:
       date = None
       try:
@@ -120,7 +126,7 @@ class yfmAdmin:
         symbols = self.yfdb.symbols.find()
         for symbol in symbols:
           data = yfetcher.getHistAsJson(symbol['sym'], startDate, endDate, 'd+v')
-          print "Adding '[" + startDate +", " + endDate  + "]' data for symbol '" + symbol['sym'] + "'"
+          self.sprint ("Adding '[" + startDate +", " + endDate  + "]' data for symbol '" + symbol['sym'] + "'")
           for entry in data:
             self.yfdb.timeline.insert(entry)
       except ValueError:

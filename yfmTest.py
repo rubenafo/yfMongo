@@ -25,8 +25,20 @@ class yfmTest (unittest.TestCase):
   def __init__(self, testCaseNames):
     unittest.TestCase.__init__(self,testCaseNames)
     client = MongoClient('localhost', 27017)
-    self.admin = yfmAdmin(client, "yfmtest")
+    self.admin = yfmAdmin(client, "yfmtest", False)
     self.db = client["yfmtest"]
+
+  # Creates some test data in the timeline
+  def generateData (self):
+    self.db.symbols.insert ({'sym':"a"})
+    self.db.symbols.insert ({'sym':"b"})
+    self.db.symbols.insert ({'sym':"c"})
+    self.db.timeline.insert ({"o":2.3, "c":3.2, "d":0, "v":12000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'a'})
+    self.db.timeline.insert ({"o":2.3, "c":3.2, "d":0, "v":12000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'a'})
+    self.db.timeline.insert ({"o":3.45, "c":3.0, "d":0, "v":15000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'b'})
+    self.db.timeline.insert ({"o":10.3, "c":3.2, "d":0, "v":15000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'b'})
+    self.db.timeline.insert ({"o":2.3, "c":3.2, "d":0, "v":1000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'c'})
+    self.db.timeline.insert ({"o":2.3, "c":3.2, "d":0, "v":1000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'c'})
 
   # Creates the empty database, but containing admin documents
   def setUp (self):
@@ -43,13 +55,47 @@ class yfmTest (unittest.TestCase):
     self.admin.clear()
     self.assertTrue (self.db.admin.find().count() == 0);
     self.assertTrue (self.db.timeline.find().count() == 0);
-    self.assertTrue (self.db.symbols.find().count() == 0);
+    self.assertEqual (self.db.symbols.find().count(), 0);
 
+  # Stocks are added correctly
   def test_add_stock (self):
     self.admin.add("a")
     self.admin.add("b")
     self.admin.add("c")
-    self.assertTrue (self.db.symbols.find().count() == 3);
+    self.assertTrue (self.db.symbols.count() == 3);
+
+  # Repeated stocks arent added
+  def test_add_repeat_stocks (self):
+    self.admin.add ("a")
+    self.admin.add ("b")
+    self.admin.add ("a")
+    self.assertTrue (self.db.symbols.count() == 2);
+
+  # Test the symbol loading from file
+  def test_load_symbols_file (self):
+    self.admin.loadSymbols ("dowjones")
+    self.assertEqual (self.db.symbols.count(), 30)
+
+  # Test the removal of a symbol
+  def test_removal (self):
+    self.admin.loadSymbols ("dowjones")
+    self.admin.remove ("ibm")
+    self.assertEqual (self.db.symbols.count(), 29)
+    self.assertEqual (self.db.symbols.find({'sym':"ibm"}).count(), 0)
+
+  # Test removel of symbol and its related timeline
+  def test_full_removal (self):
+    self.generateData()
+    self.assertEqual(self.db.timeline.count(), 6)
+    self.admin.remove("a")
+    self.assertEqual (self.db.symbols.count(), 2)
+    self.assertEqual (self.db.timeline.count(), 4)
+    self.admin.remove("b")
+    self.assertEqual (self.db.symbols.count(), 1)
+    self.assertEqual (self.db.timeline.count(), 2)
+    self.admin.remove("c")
+    self.assertEqual (self.db.symbols.count(), 0)
+    self.assertEqual (self.db.timeline.count(), 0)
 
 if __name__ == '__main__':
       unittest.main()
