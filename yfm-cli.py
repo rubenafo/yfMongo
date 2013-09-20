@@ -19,7 +19,7 @@ from pymongo import *
 from yfmAdmin import yfmAdmin
 
 ##
-## yFinance-mongo command line interface
+## yFinanceMongo command line interface
 ##
 
 #

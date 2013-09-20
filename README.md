@@ -1,4 +1,4 @@
-Yfinance-mongo
+YfinanceMongo
 ==============
 
 This module provides a database admin command line interface to store the stock content fetched using 
@@ -9,7 +9,8 @@ stock information, the symbols in the database and their time window.
 
 ### Requirements
 * Python v2.7 at least
-* a MongoDb running on standard port
+* Pymongo python module
+* a running MongoDb 
 
 ### Usage
 The command line help shows the available functionality:
