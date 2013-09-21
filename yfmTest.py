@@ -15,7 +15,7 @@
 
 import unittest
 from pymongo import *
-from yfmAdmin import yfmAdmin
+from yfinanceMongo import *
 
 class yfmTest (unittest.TestCase):
 
@@ -25,7 +25,7 @@ class yfmTest (unittest.TestCase):
   def __init__(self, testCaseNames):
     unittest.TestCase.__init__(self,testCaseNames)
     client = MongoClient('localhost', 27017)
-    self.admin = yfmAdmin(client, "yfmtest", False)
+    self.admin = yfinanceMongo(client, "yfmtest", False)
     self.db = client["yfmtest"]
 
   # Creates some test data in the timeline
