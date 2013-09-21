@@ -22,6 +22,7 @@ from pymongo import *
 class yfinanceMongo:
 
   DATABASE_NAME = "yf-mongo";
+  mongoCLient = None
   yfdb = None;
   verbose = False
 
@@ -29,8 +30,9 @@ class yfinanceMongo:
     if self.verbose:
       print msg
 
-  def __init__(self, dbClient, databaseName, verbose):
-    self.yfdb = dbClient[databaseName];
+  def __init__(self, hostName, mongoPort, databaseName, verbose):
+    self.mongoClient = MongoClient(hostName, mongoPort)
+    self.yfdb = self.mongoClient[databaseName];
     self.verbose = verbose
 
   #

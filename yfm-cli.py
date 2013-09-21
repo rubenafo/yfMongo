@@ -15,8 +15,7 @@
 
 
 import sys
-from pymongo import *
-from yfinanceMongo import yfinanceMongo
+from yfinanceMongo import *
 
 ##
 ## yFinanceMongo command line interface
@@ -38,8 +37,7 @@ def showHelp ():
 
 # end showHelp
 
-client = MongoClient('localhost', 27017)
-moAdmin = yfinanceMongo(client, "yf-mongo", True)
+moAdmin = yfinanceMongo("localhost", 27017, "yf-mongo", True)
 
 numParams = len(sys.argv)
 if numParams == 1: # no args
