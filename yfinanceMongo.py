@@ -21,7 +21,6 @@ from pymongo import *
 
 class yfinanceMongo:
 
-  DATABASE_NAME = "yf-mongo";
   mongoCLient = None
   yfdb = None;
   verbose = False
