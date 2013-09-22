@@ -21,7 +21,7 @@ from pymongo import *
 
 class yfinanceMongo:
 
-  mongoCLient = None
+  mongoClient = None
   yfdb = None;
   verbose = False
 
