@@ -25,7 +25,7 @@ class yfmTest (unittest.TestCase):
   def __init__(self, testCaseNames):
     unittest.TestCase.__init__(self,testCaseNames)
     # our yfinanceMongo client
-    self.admin = yfinanceMongo("localhost", 27017, "yfmtest", False)
+    self.admin = yfinanceMongo(hostname="localhost", port=27017, database="yfmtest", verbose=False)
     # setup a client to access the mongodb and check its content directly
     client = MongoClient ("localhost", 27017);
     self.db = client["yfmtest"]

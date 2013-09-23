@@ -29,9 +29,13 @@ class yfinanceMongo:
     if self.verbose:
       print msg
 
-  def __init__(self, hostName, mongoPort, databaseName, verbose):
-    self.mongoClient = MongoClient(hostName, mongoPort)
-    self.yfdb = self.mongoClient[databaseName];
+  def __init__(self, user=None, password=None, hostname="localhost", port=27017, database="admin", verbose=True):
+    userAndPass = ""
+    if user and password:
+      userAndPass = user + ":" + str(password) + "@"
+    url = "mongodb://" + userAndPass + hostname + ":" + str(port) + "/" + database
+    self.mongoClient = MongoClient(url)
+    self.yfdb = self.mongoClient[database];
     self.verbose = verbose
 
   #

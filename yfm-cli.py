@@ -37,7 +37,7 @@ def showHelp ():
 
 # end showHelp
 
-moAdmin = yfinanceMongo("localhost", 27017, "yf-mongo", True)
+moAdmin = yfinanceMongo(hostname="localhost", port=27017, database="yf-mongo", verbose=True)
 
 numParams = len(sys.argv)
 if numParams == 1: # no args
