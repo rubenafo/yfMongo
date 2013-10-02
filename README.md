@@ -8,20 +8,23 @@ The main idea is to provide a wrap application to handle the database content in
 stock information, the symbols in the database and their time window.
 
 ### Requirements
-* Python v2.7 at least
+* Python v2.6 at least
 * Pymongo python module
 * a running MongoDb 
 
 ### Usage
 The command line help shows the available functionality:
 ```
-Usage : yfm-cli clear                -- clears the DB
-        yfm-cli init                 -- clears AND creates the base structure
-        yfm-cli add <stock>          -- adds a stock to the db
-        yfm-cli load-symbols <file>  -- loads symbols from a file
-        yfm-cli remove <stock>       -- removes a stock from the db
-        yfm-cli fetch <date>         -- fetches all symbols for given date
-        yfm-cli fetch <start> <end>  -- fetches data between both dates
-        yfm-cli info                 -- prints out admin info and symbols
-        yfm-cli info symbols         -- prints symbols
+Usage :
+ yfm-cli clear                      -- clear all content from the db
+ yfm-cli add <symbol>               -- add a symbol to the db
+         add <symbol> <date>        -- add a symbol, then fetch the date
+         add <symbol> <start> <end> -- add a symbol and fetch the period
+ yfm-cli load-symbols <file>        -- load the symbols from a file
+ yfm-cli remove <symbol>            -- remove a symbol from the db
+ yfm-cli fetch <date>               -- fetch the given date for all symbols
+         fetch <start> <end>        -- fetch data between both dates
+ yfm-cli info                       -- print out admin info
+ yfm-cli info symbols               -- print symbols
+
 ```
