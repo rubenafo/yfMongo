@@ -22,9 +22,9 @@ Usage :
          add <symbol> <start> <end> -- add a symbol and fetch the period
  yfm-cli load-symbols <file>        -- load the symbols from a file
  yfm-cli remove <symbol>            -- remove a symbol from the db
- yfm-cli fetch <date>               -- fetch the given date for all symbols
-         fetch <start> <end>        -- fetch data between both dates
- yfm-cli info                       -- print out admin info
+ yfm-cli fetch <date>               -- fetch the given date for all symbols in the db
+         fetch <start> <end>        -- fetch data between both dates for all symbols 
+ yfm-cli info                       -- print out database info
  yfm-cli info symbols               -- print symbols
 
 ```
