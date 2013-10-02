@@ -26,15 +26,17 @@ class yfinanceCli:
   # Help message when no valid options are provided
   #
   def showHelp (self):
-    print "Usage : yfm-cli clear                -- clears the DB"
-    print "        yfm-cli init                 -- clears AND creates the base structure"
-    print "        yfm-cli add <stock>          -- adds a stock to the db"
-    print "        yfm-cli load-symbols <file>  -- loads symbols from file"
-    print "        yfm-cli remove <stock>       -- removes a stock from the db"
-    print "        yfm-cli fetch <date>         -- fetches all symbols for given date"
-    print "        yfm-cli fetch <start> <end>  -- fetches data between both dates"
-    print "        yfm-cli info                 -- prints out admin info"
-    print "        yfm-cli info symbols         -- prints symbols"
+    print "Usage :"
+    print " yfm-cli clear                      -- clear all content from the db"
+    print " yfm-cli add <symbol>               -- add a symbol to the db"
+    print "         add <symbol> <date>        -- add a symbol, then fetch the date"
+    print "         add <symbol> <start> <end> -- add a symbol and fetch the period"
+    print " yfm-cli load-symbols <file>        -- load the symbols from a file"
+    print " yfm-cli remove <symbol>            -- remove a symbol from the db"
+    print " yfm-cli fetch <date>               -- fetch the given date for all symbols"
+    print "         fetch <start> <end>        -- fetch data between both dates"
+    print " yfm-cli info                       -- print out admin info"
+    print " yfm-cli info symbols               -- print symbols"
 
   def __init__(self, cliParams, hostname, port, database, user, password, verbose):
     moAdmin = yfinanceMongo(hostname=hostname, port=port, database=database, user=user, password=password, verbose=verbose)
@@ -52,14 +54,6 @@ class yfinanceCli:
 
       if firstParam == "info":
         moAdmin.info()
-        exit()
-
-      if firstParam == "init":
-        moAdmin.clear()
-        moAdmin.init()
-        exit()
-      else:
-        showHelp()
         exit()
 
     if numParams == 3:
@@ -87,6 +81,20 @@ class yfinanceCli:
         startDate = cliParams[2]
         endDate = cliParams[3]
         moAdmin.fetchInterval (startDate, endDate)
+        exit()
+
+      if firstParam == "add":
+        symbol = cliParams[2]
+        date = cliParams[3]
+        moAdmin.add (symbol, date)
+        exit()
+
+    if numParams == 5:
+      if firstParam == "add":
+        symbol = cliParams[2]
+        startDate = cliParams[3]
+        endDate = cliParams[4]
+        moAdmin.add (symbol, startDate, endDate);
         exit()
     # defaul help output when no option matched
     self.showHelp()

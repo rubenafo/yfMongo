@@ -38,35 +38,21 @@ class yfinanceMongo:
     self.yfdb = self.mongoClient[database];
     self.verbose = verbose
 
-  #
-  # Returns the admin row defining the content, found in the db.admin collection.
-  # If it is not found means the environment is not reliable.
-  #
-  def _getAdminDocument (self):
-    row = self.yfdb.admin.find({'type':'content'})
-    if row.count() == 0:
-      return None
-    else:
-      return next(row)
-
   def clear (self):
-      self.sprint ("Removing all collections [admin, data, symbols] ... done")
-      self.yfdb.admin.remove();
+      self.sprint ("Removing all collections [symbols and timeline] ... done")
       self.yfdb.timeline.remove();
       self.yfdb.symbols.remove();
 
-  def init (self):
-      self.sprint ("Initializing base structure for admin ... done")
-      self.yfdb.admin.insert ({'type':'user', 'user':'admin', 'password':'', 'lastLogin':''});
-      self.yfdb.admin.insert ({'type':'content', 'lastUpdate':'', 'consistent':1});
-
-  def add (self, value):
-      exists = self.yfdb.symbols.find ({'sym':value}).count()
-      if exists:
-        self.sprint ("Error: symbol'" + value + "' already in the database")
+  def add (self, symbol, startDate = None, endDate = None):
+    exists = self.yfdb.symbols.find ({'sym':symbol}).count()
+    if not exists:
+      self.yfdb.symbols.insert ({'sym':symbol});
+      self.sprint ("'" + symbol + "'" + " added to the database")
+    if startDate != None:
+      if endDate != None:
+        self.fetchInterval (startDate, endDate, symbol)
       else:
-        self.yfdb.symbols.insert ({'sym':value});
-        self.sprint ("'" + value + "'" + " added to the database")
+        self.fetch (startDate, symbol)
 
   def remove (self, value):
       exists = self.yfdb.symbols.find({'sym': value}).count();
@@ -82,14 +68,9 @@ class yfinanceMongo:
   # and the symbols contained in the database
   #
   def info (self):
-    adminReg = self._getAdminDocument()
-    if adminReg == None:
-      print "Error: admin info couldn't be found. Run 'create' option"
-    else:
-      symbols = self.yfdb.symbols.find();
-      print "Found admin info"
-      print "Timeline size: " + str(self.yfdb.timeline.find().count())
-      print "Symbols: " + str(symbols.count())
+    symbols = self.yfdb.symbols.find();
+    print "Timeline size: " + str(self.yfdb.timeline.find().count())
+    print "Symbols: " + str(symbols.count())
 
   # Print only symbol ids
   def infoSymbols (self):
@@ -98,44 +79,47 @@ class yfinanceMongo:
         print symb['sym']
 
   #
-  # Fetches all symbols for provided date
+  # Fetches symbols for provided date.
+  # If provided symbol is not None it fetches only it, otherwise
+  # uses as symbols all available symbols in the database.
   #
-  def fetch (self, targetDate):
-    adminReg = self._getAdminDocument()
-    if adminReg == None:
-      self.sprint ("Error: admin info couldn't be found. Run 'create' option")
-    else:
-      date = None
-      try:
-        date = datetime.strptime(targetDate, "%d/%m/%Y")
-        yfetcher = YFinanceFetcher()
+  def fetch (self, targetDate, symbol=None):
+    date = None
+    try:
+      date = datetime.strptime(targetDate, "%d/%m/%Y")
+      yfetcher = YFinanceFetcher()
+      if symbol == None:
         symbols = self.yfdb.symbols.find()
-        for symbol in symbols:
-          data = yfetcher.getHistAsJson(symbol['sym'], targetDate, targetDate, 'd+v')
-          self.sprint ("Adding '" + targetDate + "' data for symbol '" + symbol['sym'] + "'")
-          for entry in data:
-            self.yfdb.timeline.insert(entry)
-      except ValueError:
-        print "Error: invalid provided date format (expected dd/mm/yyyy)"
+      else:
+        symbols = self.yfdb.symbols.find({'sym': symbol})
+      for symbol in symbols:
+        data = yfetcher.getHistAsJson(symbol['sym'], targetDate, targetDate, 'd+v')
+        self.sprint ("Adding '" + targetDate + "' data for symbol '" + symbol['sym'] + "'")
+        for entry in data:
+          self.yfdb.timeline.insert(entry)
+    except ValueError:
+      print "Error: invalid provided date format (expected dd/mm/yyyy)"
 
-  def fetchInterval (self, startDate, endDate):
-    adminReg = self._getAdminDocument()
-    if adminReg == None:
-      self.sprint ("Error: admin info couldn't be found. Run 'create' option")
-    else:
-      date = None
-      try:
-        sdate = datetime.strptime(startDate, "%d/%m/%Y")
-        edate = datetime.strptime(endDate, "%d/%m/%Y")
-        yfetcher = YFinanceFetcher()
+  # Fetches symbol data for the interval between startDate and endDate
+  # If the symbol is not None, all symbols found in the database are
+  # updated.
+  def fetchInterval (self, startDate, endDate, symbol=None):
+    date = None
+    try:
+      sdate = datetime.strptime(startDate, "%d/%m/%Y")
+      edate = datetime.strptime(endDate, "%d/%m/%Y")
+      yfetcher = YFinanceFetcher()
+      if symbol == None:
         symbols = self.yfdb.symbols.find()
-        for symbol in symbols:
-          data = yfetcher.getHistAsJson(symbol['sym'], startDate, endDate, 'd+v')
-          self.sprint ("Adding '[" + startDate +", " + endDate  + "]' data for symbol '" + symbol['sym'] + "'")
-          for entry in data:
-            self.yfdb.timeline.insert(entry)
-      except ValueError:
-        print "Error: invalid provided date format (expected dd/mm/yyyy)"
+      else:
+        symbols = self.yfdb.symbols.find ({'sym':symbol})
+      for symbol in symbols:
+        data = yfetcher.getHistAsJson(symbol['sym'], startDate, endDate, 'd+v')
+        self.sprint ("Adding '[" + startDate +", " + endDate  + "]' data for symbol '" + symbol['sym'] + "'")
+        for entry in data:
+          self.yfdb.timeline.insert(entry)
+    except ValueError:
+      print "Error: invalid provided date format (expected dd/mm/yyyy)"
 
   # Loads symbols from a file, separated by spaces or commas
   def loadSymbols (self, sfile):
@@ -146,4 +130,3 @@ class yfinanceMongo:
       values = re.split(" |,", line)
       for value in values:
         self.add (value)
-

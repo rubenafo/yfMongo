@@ -45,17 +45,14 @@ class yfmTest (unittest.TestCase):
   # Creates the empty database, but containing admin documents
   def setUp (self):
     self.admin.clear()
-    self.admin.init()
 
   # Checks the create() generates the correct structure in the db
   def test_init (self):
-    self.assertTrue (self.db.admin.find().count() == 2);
     self.assertTrue (self.db.timeline.find().count() == 0);
     self.assertTrue (self.db.symbols.find().count() == 0);
 
   def test_clear(self):
     self.admin.clear()
-    self.assertTrue (self.db.admin.find().count() == 0);
     self.assertTrue (self.db.timeline.find().count() == 0);
     self.assertEqual (self.db.symbols.find().count(), 0);
 
