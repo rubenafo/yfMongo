@@ -33,7 +33,7 @@ class yfinanceMongo:
     userAndPass = ""
     if user and password:
       userAndPass = user + ":" + str(password) + "@"
-    url = "mongodb://" + userAndPass + hostname + ":" + str(port) + "/" + database
+    url = "mongodb://" + userAndPass + hostname + ":" + str(port)
     self.mongoClient = MongoClient(url)
     self.yfdb = self.mongoClient[database];
     self.verbose = verbose
