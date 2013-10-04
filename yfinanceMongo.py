@@ -132,3 +132,19 @@ class yfinanceMongo:
       values = filter (None, values)
       for value in values:
         self.add (value)
+
+  # Fetchs the data for all symbols for the provided date. The aim is to detect invalid
+  # symbols so it is up to the user to define a date when the market is known to have
+  # data.
+  def test (self, testdate):
+    try:
+      sdate = datetime.strptime(testdate, "%d/%m/%Y")
+      yfetcher = YFinanceFetcher()
+      symbols = self.yfdb.symbols.find()
+      for symbol in symbols:
+        data = yfetcher.getHistAsJson(symbol['sym'], testdate, testdate, 'd+v')
+        if len(data) == 0:
+          self.sprint ("Warning '[" + testdate +"]  no data found for symbol '" + symbol['sym'] + "'")
+    except ValueError:
+      print "Error: invalid provided date format (expected dd/mm/yyyy)"
+

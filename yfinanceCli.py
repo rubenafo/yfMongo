@@ -35,6 +35,7 @@ class yfinanceCli:
     print " yfm-cli remove <symbol>            -- remove a symbol from the db"
     print " yfm-cli fetch <date>               -- fetch the given date for all symbols"
     print "         fetch <start> <end>        -- fetch data between both dates"
+    print " yfm-cli test date                  -- test symbols fetching the given date"
     print " yfm-cli info                       -- print out admin info"
     print " yfm-cli info symbols               -- print symbols"
 
@@ -74,6 +75,9 @@ class yfinanceCli:
       if firstParam == "load-symbols":
         moAdmin.loadSymbols (secondParam);
         exit();
+      if firstParam == "test":
+        moAdmin.test (secondParam);
+        exit()
       self.showHelp()
 
     if numParams == 4:
