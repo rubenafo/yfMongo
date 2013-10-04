@@ -128,5 +128,7 @@ class yfinanceMongo:
     lines = (line.rstrip('\n') for line in open(sfile))
     for line in lines:
       values = re.split(" |,", line)
+      values = [x.strip(' ') for x in values]
+      values = filter (None, values)
       for value in values:
         self.add (value)
