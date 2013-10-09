@@ -29,6 +29,26 @@ class yfinanceMongo:
     if self.verbose:
       print msg
 
+  # Generic function to check all user input dates
+  # The format must be dd/mm/yyyy and cannot be in the future.
+  # In case of error the execution of the application is stopped.
+  def __checkDate (self, date):
+    try:
+      inputDate = datetime.strptime(date, "%d/%m/%Y")
+      currentTime = datetime.now()
+      if (inputDate > currentTime):
+        self.sprint ("Error: provided date (" + date + ") is in the future")
+        exit()
+    except ValueError:
+      self.sprint ("Error: invalid provided date format (expected dd/mm/yyyy)")
+      exit()
+
+  def __getFormattedDate (self, symbol):
+      try:
+        return datetime.strptime(symbol['d'], "%d/%m/%Y")
+      except ValueError:
+        self.sprint ("Error: invalid provided date format (expected dd/mm/yyyy)")
+
   def __init__(self, user=None, password=None, hostname="localhost", port=27017, database="admin", verbose=True):
     userAndPass = ""
     if user and password:
@@ -71,6 +91,14 @@ class yfinanceMongo:
     symbols = self.yfdb.symbols.find();
     print "Timeline size: " + str(self.yfdb.timeline.find().count())
     print "Symbols: " + str(symbols.count())
+    dates = []
+    symbols = self.yfdb.timeline.find()
+    for symb in symbols:
+       date = self.__getFormattedDate (symb)
+       dates.append(date)
+    if dates:
+      print "Oldest record: " + min(dates).strftime("%d/%m/%y")
+      print "Most recent record: " + max(dates).strftime("%d/%m/%y")
 
   # Print only symbol ids
   def infoSymbols (self):
@@ -84,21 +112,17 @@ class yfinanceMongo:
   # uses as symbols all available symbols in the database.
   #
   def fetch (self, targetDate, symbol=None):
-    date = None
-    try:
-      date = datetime.strptime(targetDate, "%d/%m/%Y")
-      yfetcher = YFinanceFetcher()
-      if symbol == None:
-        symbols = self.yfdb.symbols.find()
-      else:
-        symbols = self.yfdb.symbols.find({'sym': symbol})
-      for symbol in symbols:
-        data = yfetcher.getHistAsJson(symbol['sym'], targetDate, targetDate, 'd+v')
-        self.sprint ("Adding '" + targetDate + "' data for symbol '" + symbol['sym'] + "'")
-        for entry in data:
-          self.yfdb.timeline.insert(entry)
-    except ValueError:
-      print "Error: invalid provided date format (expected dd/mm/yyyy)"
+    self.__checkDate(targetDate)
+    yfetcher = YFinanceFetcher()
+    if symbol == None:
+      symbols = self.yfdb.symbols.find()
+    else:
+      symbols = self.yfdb.symbols.find({'sym': symbol})
+    for symbol in symbols:
+      data = yfetcher.getHistAsJson(symbol['sym'], targetDate, targetDate, 'd+v')
+      self.sprint ("Adding '" + targetDate + "' data for symbol '" + symbol['sym'] + "'")
+      for entry in data:
+        self.yfdb.timeline.insert(entry)
 
   # Fetches symbol data for the interval between startDate and endDate
   # If the symbol is not None, all symbols found in the database are
@@ -137,14 +161,10 @@ class yfinanceMongo:
   # symbols so it is up to the user to define a date when the market is known to have
   # data.
   def test (self, testdate):
-    try:
-      sdate = datetime.strptime(testdate, "%d/%m/%Y")
-      yfetcher = YFinanceFetcher()
-      symbols = self.yfdb.symbols.find()
-      for symbol in symbols:
-        data = yfetcher.getHistAsJson(symbol['sym'], testdate, testdate, 'd+v')
-        if len(data) == 0:
-          self.sprint ("Warning '[" + testdate +"]  no data found for symbol '" + symbol['sym'] + "'")
-    except ValueError:
-      print "Error: invalid provided date format (expected dd/mm/yyyy)"
-
+    self.__checkDate(testdate)
+    yfetcher = YFinanceFetcher()
+    symbols = self.yfdb.symbols.find()
+    for symbol in symbols:
+      data = yfetcher.getHistAsJson(symbol['sym'], testdate, testdate, 'd+v')
+      if len(data) == 0:
+        self.sprint ("Warning '(" + testdate +")  no data found for symbol '" + symbol['sym'] + "'")
