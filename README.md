@@ -20,6 +20,13 @@ __[Openshift](http://www.openshift.com)__ environment (basically the module is r
 MongoDB connection: user, pass, host and port).<br>
 It is called __[yfm-oscli.py](https://github.com/figurebelow/yfinanceMongo/blob/master/yfm-oscli.py)__
 
+#### Database structure
+
+By default yfinanceMongo creates a database called _yfmongo_ in your local MongoDb setup.
+Inside this database, two collections are created as well: 
+* _symbols_ : contains the defined symbols
+* _timeline_ : contains the tickers for the symbols.
+
 ### Usage
 The command line help shows the available functionality:
 ```
