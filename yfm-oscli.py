@@ -29,7 +29,7 @@ user = os.environ.get("OPENSHIFT_MONGODB_DB_USERNAME")
 password = os.environ.get("OPENSHIFT_MONGODB_DB_PASSWORD")
 
 # The database name, anything goes well
-database = "test01"
+database = "yfmongo"
 
 
 cli = yfinanceCli (sys.argv, hostname=hostname, port=port, user=user, password=password, database=database, verbose=True)
