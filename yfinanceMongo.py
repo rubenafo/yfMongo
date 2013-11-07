@@ -17,6 +17,7 @@ import re
 from datetime import datetime, date, time
 sys.path.append("yfinancefetcher")
 from yfinancefetcher import *
+import ast
 from pymongo import *
 
 class yfinanceMongo:
@@ -195,3 +196,19 @@ class yfinanceMongo:
         self.sprint ("Warning '" + symbol['sym'] +"',  no data found in '" + testdate + "'")
       else:
         self.sprint ("Data found for '" + symbol['sym'] + "', in '" + testdate + "'")
+
+  #
+  # Exports the timeline content to the given filename in JSON format
+  #
+  def export (self, filename):
+    exportFile = open (filename, "w")
+    symbols = self.yfdb.timeline.find()
+    for symb in symbols:
+      newone = {}
+      keys = symb.keys()
+      for key in keys:
+        if key != "_id":
+          newone[key.encode('utf-8')] = str(symb[key]).encode('utf-8')
+      exportFile.write(str(newone))
+      exportFile.write("\n")
+    exportFile.close()

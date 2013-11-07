@@ -38,6 +38,7 @@ class yfinanceCli:
     print " yfm-cli test date                  -- test symbols fetching the given date"
     print " yfm-cli info                       -- print out admin info"
     print " yfm-cli info symbols               -- print symbols"
+    print " yfm-cli export filename            -- export the content to the given filename"
 
   def __init__(self, cliParams, hostname, port, database, user, password, verbose):
     moAdmin = yfinanceMongo(hostname=hostname, port=port, database=database, user=user, password=password, verbose=verbose)
@@ -73,10 +74,13 @@ class yfinanceCli:
           moAdmin.infoSymbols ()
           exit()
       if firstParam == "load-symbols":
-        moAdmin.loadSymbols (secondParam);
+        moAdmin.loadSymbols (secondParam)
         exit();
       if firstParam == "test":
-        moAdmin.test (secondParam);
+        moAdmin.test (secondParam)
+        exit()
+      if firstParam == "export":
+        moAdmin.export (secondParam)
         exit()
       self.showHelp()
 
