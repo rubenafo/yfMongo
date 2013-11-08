@@ -203,12 +203,14 @@ class yfinanceMongo:
   def export (self, filename):
     exportFile = open (filename, "w")
     symbols = self.yfdb.timeline.find()
+    output = [];
     for symb in symbols:
       newone = {}
       keys = symb.keys()
       for key in keys:
         if key != "_id":
           newone[key.encode('utf-8')] = str(symb[key]).encode('utf-8')
-      exportFile.write(str(newone))
-      exportFile.write("\n")
+      output.append(newone)
+    # write to file
+    exportFile.write(str(output))
     exportFile.close()
