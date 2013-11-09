@@ -14,6 +14,8 @@
 
 import sys
 import re
+import csv
+import json
 from datetime import datetime, date, time
 sys.path.append("yfinancefetcher")
 from yfinancefetcher import *
@@ -200,17 +202,26 @@ class yfinanceMongo:
   #
   # Exports the timeline content to the given filename in JSON format
   #
-  def export (self, filename):
+  def exportJSON (self, filename):
     exportFile = open (filename, "w")
-    symbols = self.yfdb.timeline.find()
+    symbols = self.yfdb.timeline.find({}, { '_id': 0})
     output = [];
     for symb in symbols:
-      newone = {}
-      keys = symb.keys()
-      for key in keys:
-        if key != "_id":
-          newone[key.encode('utf-8')] = str(symb[key]).encode('utf-8')
-      output.append(newone)
-    # write to file
-    exportFile.write(str(output))
+        output.append(symb)
+    exportFile.write (json.dumps(output))
     exportFile.close()
+
+  #
+  # Exports the timeline content to the given filename in CSV format
+  #
+  def exportCSV (self, filename):
+    exportFile = open (filename, "w")
+    # exclude the _id
+    symbols = self.yfdb.timeline.find({}, { '_id': 0})
+    first = symbols[0]
+    if first:
+      w = csv.DictWriter(exportFile, first.keys())
+      w.writeheader()
+      for symb in symbols:
+        w.writerow(symb)
+      exportFile.close()
