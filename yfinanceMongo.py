@@ -17,7 +17,7 @@ import re
 import csv
 import json
 from datetime import datetime, date, time
-sys.path.append("yfinancefetcher")
+sys.path.append("libs/yfinancefetcher")
 from yfinancefetcher import *
 import ast
 from pymongo import *
