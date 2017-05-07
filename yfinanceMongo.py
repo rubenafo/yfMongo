@@ -17,8 +17,7 @@ import re
 import csv
 import json
 from datetime import datetime, date, time
-sys.path.append("libs/yfinancefetcher")
-from yfinancefetcher import *
+from YahooFetcher import *
 import ast
 from pymongo import *
 
@@ -135,7 +134,7 @@ class yfinanceMongo:
   #
   def fetch (self, targetDate, symbol=None):
     self.__checkDate(targetDate)
-    yfetcher = YFinanceFetcher()
+    yfetcher = YahooFetcher()
     if symbol == None:
       symbols = self.yfdb.symbols.find()
     else:
@@ -156,7 +155,7 @@ class yfinanceMongo:
     try:
       sdate = datetime.strptime(startDate, "%d/%m/%Y")
       edate = datetime.strptime(endDate, "%d/%m/%Y")
-      yfetcher = YFinanceFetcher()
+      yfetcher = YahooFetcher()
       if symbol == None:
         symbols = self.yfdb.symbols.find()
       else:
@@ -190,7 +189,7 @@ class yfinanceMongo:
   #
   def test (self, testdate):
     self.__checkDate(testdate)
-    yfetcher = YFinanceFetcher()
+    yfetcher = YahooFetcher()
     symbols = self.yfdb.symbols.find()
     for symbol in symbols:
       data = yfetcher.getHistAsJson(symbol['sym'], testdate, testdate, 'd+v')

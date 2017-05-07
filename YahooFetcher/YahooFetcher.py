@@ -14,7 +14,7 @@
 
 import csv;
 import urllib2;
-import yfinancequery;
+import QueryBuilder;
 from urllib2 import *;
 
 #
@@ -22,7 +22,7 @@ from urllib2 import *;
 # and returns the result
 #
 
-class YFinanceFetcher:
+class YahooFetcher:
 
   def __init__(self):
     None
@@ -68,7 +68,7 @@ class YFinanceFetcher:
   #  Symbol (optional), Date, Open, High, Low, Close, Volume, Adj Close, Dividends(optional)
   #
   def getHist (self, symbol, startDate, endDate, info, appendSymbol, appendHeader):
-    query = yfinancequery.YFinanceQuery ()
+    query = QueryBuilder.Query ()
     if (info == "d+v"):
       try:
         url_daily = urllib2.urlopen (query.getHist(symbol, startDate, endDate, "d"))

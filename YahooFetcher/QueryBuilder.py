@@ -16,7 +16,7 @@
 # This class builds the URL using Yahoo conventions.
 #
 
-class YFinanceQuery :
+class Query:
 
   HIST_BASE_URL = "http://ichart.finance.yahoo.com/table.csv?s=_SYMBOL_&a=_M1_&b=_D1_&c=_Y1_&d=_M2_&e=_D2_&f=_Y2_&g=_TYPE_&ignore=.csv"
   BASE_URL="http://finance.yahoo.com/d/quotes.csv?s="

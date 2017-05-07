@@ -2,7 +2,7 @@ YfinanceMongo
 ==============
 
 This module provides a database admin command line interface to store the stock content fetched using 
-__[yfinancefetcher](http://www.github.com/figurebelow/yfinancefetcher)__ module into a MongoDb.
+__[YahooFetcher](http://www.github.com/figurebelow/YahooFetcher)__ module into a MongoDb.
 
 The main idea is to provide a wrap application to handle the database content in order to keep some consistency between the 
 stock information and the symbols in the database so you can relay in your local data whithout query the Yahoo Finance API one time and another.
