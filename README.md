@@ -1,7 +1,7 @@
 yfMongo
 ==============
 
-This module provides a database admin command line interface to store the stock content fetched using 
+yfMongo provides a database admin command line interface to store the stock content fetched using 
 __[YahooFetcher](http://www.github.com/rubenafo/YahooFetcher)__ module into a MongoDb.
 
 The main idea is to provide a wrap application to handle the database content in order to keep some consistency between the 
