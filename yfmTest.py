@@ -1,21 +1,13 @@
 #!/usr/bin/python
-## Copyright 2013 Ruben Afonso, http://www.figurebelow.com
+# 
+# Copyright 2017 Ruben Afonso, <rbfrancos@gmail.com>
+# Licensed under the Apache License (see LICENSE)
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+
 
 import unittest
 from pymongo import *
-from yfinanceMongo import *
+from yfMongo import *
 
 class yfmTest (unittest.TestCase):
 
@@ -26,7 +18,7 @@ class yfmTest (unittest.TestCase):
   def __init__(self, testCaseNames):
     unittest.TestCase.__init__(self,testCaseNames)
     # our yfinanceMongo client
-    self.admin = yfinanceMongo(hostname="localhost", port=27017, database="yfmtest", verbose=False)
+    self.admin = yfMongo(hostname="localhost", port=27017, database="yfmtest", verbose=False)
     # setup a client to access the mongodb and check its content directly
     self.client = MongoClient ("localhost", 27017);
     self.db = self.client["yfmtest"]

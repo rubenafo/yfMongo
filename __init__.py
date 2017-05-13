@@ -1,1 +1,2 @@
-from yfinanceMongo import *
+from yfMongo import *
+from yfm import *

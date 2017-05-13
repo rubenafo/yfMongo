@@ -1,21 +1,13 @@
-# Copyright 2012 Ruben Afonso, http://www.figurebelow.com
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Copyright 2017, Ruben Afonso - http://www.github.com/rubenafo
+# Licensed under the Apache License (see the LICENSE file)
 #
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
-import csv;
-import urllib2;
-import QueryBuilder;
-from urllib2 import *;
+import csv
+import urllib2
+import QueryBuilder
+from ComponentsExtractor import ComponentsExtractor
+from urllib2 import *
 
 #
 # This class invokes a query builder, fetches the content from the received URL
@@ -156,3 +148,5 @@ class YahooFetcher:
     urldata = urllib2.urlopen (url)
     return list(csv.reader (urldata.read().splitlines()))
 
+  def getComponents(self, index):
+    return ComponentsExtractor().getComponents(index);

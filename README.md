@@ -15,44 +15,44 @@ The queries are run against such API so all stock symbols must be Yahoo-identifi
 
 ### Openshift integration
 
-The common command-line interface is yfm-cli.py but an aditional client is provided to use yfinanceMongo in  a 
-__[Openshift](http://www.openshift.com)__ environment (basically the module is run using Openshift's specific values for
-MongoDB connection: user, pass, host and port).<br>
-It is called __[yfm-oscli.py](https://github.com/rubenafo/yfMongo/blob/master/yfm-oscli.py)__
+In order to use _yfm_ in OpenShift, edit _yfm_ file and override the following parameters:
+  hostname = os.environ.get("OPENSHIFT_MONGODB_DB_HOST")
+  port = os.environ.get("OPENSHIFT_MONGODB_DB_PORT")
+  user = os.environ.get("OPENSHIFT_MONGODB_DB_USERNAME")
+  password = os.environ.get("OPENSHIFT_MONGODB_DB_PASSWORD")
 
 #### Database structure
 
-By default yfinanceMongo creates a database called _yfmongo_ in your local MongoDb setup.
+By default yfMongo creates a database called _yfmongo_ in your local MongoDb setup.
 Inside this database, two collections are created as well: 
 * _symbols_ : contains the defined symbols
 * _timeline_ : contains the tickers for the symbols.
 
 ### Usage
+
+yfm is a Python script to handle the yfMongo options from the command line.
 The command line help shows the available functionality:
 ```
 Usage:
- yfm-cli clear                      -- clear all content from the db
- yfm-cli add <symbol>               -- add a symbol to the db
-         add <symbol> <date>        -- add a symbol, then fetch the date
-         add <symbol> <start> <end> -- add a symbol and fetch the period
- yfm-cli load-symbols <file>        -- load the symbols from a file
- yfm-cli remove <symbol>            -- remove a symbol from the db
- yfm-cli fetch <date>               -- fetch the given date for all symbols
-         fetch <start> <end>        -- fetch data between both dates
- yfm-cli test date                  -- test symbols fetching the given date
- yfm-cli info                       -- print out admin info
- yfm-cli info symbols               -- print symbols
+ yfm clear                      -- clear all content from the db
+ yfm add <symbol>               -- add a symbol to the db
+     add <symbol> <date>        -- add a symbol, then fetch the date
+     add <symbol> <start> <end> -- add a symbol and fetch the period
+ yfm load-symbols <file>        -- load the symbols from a file
+ yfm remove <symbol>            -- remove a symbol from the db
+ yfm fetch <date>               -- fetch the given date for all symbols
+     fetch <start> <end>        -- fetch data between both dates
+ yfm test date                  -- test symbols fetching the given date
+ yfm info                       -- print out admin info
+ yfm info symbols               -- print symbols
 
 ```
-
-yfm-cli is just a command-line interface to handle the main yfinanceMongo functionality easily.
-
 #### Clear option
 
 Running
 
 ```
-yfm-cli clear
+yfm clear
 ```
 clears out the db symbols (stored in a Mongo collection called symbols) and 
 the fetched data (stored in a Mongo collection called timeline) inside your database.
@@ -64,9 +64,9 @@ The add options allows to add symbols to the database. It is possible to just ad
 a date or a time period to fetch the data.
 
 ```
-yfm-cli goog                  # adds the 'goog' symbol to the database
-yfm-cli goog 06/05/2013       # adds the 'goog' symbol to the database and fetch the data for 6th May 2013.
-yfm-cli goog 06/05/2013 12/05/2013   # the same but fetch the data between 6th May 2013 and 12th May 2013.
+yfm goog                  # adds the 'goog' symbol to the database
+yfm goog 06/05/2013       # adds the 'goog' symbol to the database and fetch the data for 6th May 2013.
+yfm goog 06/05/2013 12/05/2013   # the same but fetch the data between 6th May 2013 and 12th May 2013.
 ```
 
 #### Load-symbols
@@ -76,7 +76,7 @@ An example of file is __[dowjones](https://github.com/rubenoaf/yfMongo/blob/mast
 symbols.
 
 ```
-$ yfm-cli load-symbols ./downjones
+$ yfm load-symbols ./downjones
 'aa' added to the database
 'axp' added to the database
 ...
@@ -89,7 +89,7 @@ $ yfm-cli load-symbols ./downjones
 This option removes a symbol from the database, deleting it from 'symbols' collection and all entries in 'timeline' collection.
 
 ```
-$ yfm-cly remove goog
+$ yfm remove goog
 'goog' removed from the database
 ```
 
@@ -98,7 +98,7 @@ $ yfm-cly remove goog
 Use 'fetch' to query stock of all defined symbols in the database to the Yahoo Finance API and store them.
 
 ```
-$ yfm-cli fetch 04/10/2013
+$ yfm fetch 04/10/2013
 Adding '04/10/2013' data for symbol 'aa'
 Adding '04/10/2013' data for symbol 'axp'
 ...
@@ -110,7 +110,7 @@ Instead of a date we can provide a time period to fetch all data in the interval
 (keep in mind that bank days/sundays and simila days when market is closed may not have any data):
 
 ```
-$ yfm-cli fetch 04/10/2013 06/10/2013
+$ yfm fetch 04/10/2013 06/10/2013
 Adding '[04/10/2013, 10/10/2013]' data for symbol 'aa'
 Adding '[04/10/2013, 10/10/2013]' data for symbol 'axp'
 ...
@@ -125,7 +125,7 @@ that do not have data in such day may be invalid.
 It is up to the user to choose a valid test day.<br>
 Note that running this option does not add any extra info to the database, it serves only to check the symbols.
 ```
-$ yfm-cli test 04/03/2013
+$ yfm test 04/03/2013
 Data found for 'aa', in '04/03/2013'
 ...
 Warning 'foo',  no data found in '04/03/2013'
@@ -136,7 +136,7 @@ The 'info' options provide information of the content of the database.
 Running the 'info' option without parameters returns information of the system:
 
 ```
-$ yfm-cli info
+$ yfm info
 Timeline size: 13409
 Symbols: 30
 Oldest record: 06/05/13
@@ -146,7 +146,7 @@ Most recent record: 31/05/13
 The option 'info symbols' returns the symbols in the database:
 
 ```
-$ yfm-cli info symbols
+$ yfm info symbols
 aa
 axp
 ...
