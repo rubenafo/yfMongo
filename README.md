@@ -1,8 +1,8 @@
-YfinanceMongo
+yfMongo
 ==============
 
 This module provides a database admin command line interface to store the stock content fetched using 
-__[YahooFetcher](http://www.github.com/figurebelow/YahooFetcher)__ module into a MongoDb.
+__[YahooFetcher](http://www.github.com/rubenafo/YahooFetcher)__ module into a MongoDb.
 
 The main idea is to provide a wrap application to handle the database content in order to keep some consistency between the 
 stock information and the symbols in the database so you can relay in your local data whithout query the Yahoo Finance API one time and another.
@@ -18,7 +18,7 @@ The queries are run against such API so all stock symbols must be Yahoo-identifi
 The common command-line interface is yfm-cli.py but an aditional client is provided to use yfinanceMongo in  a 
 __[Openshift](http://www.openshift.com)__ environment (basically the module is run using Openshift's specific values for
 MongoDB connection: user, pass, host and port).<br>
-It is called __[yfm-oscli.py](https://github.com/figurebelow/yfinanceMongo/blob/master/yfm-oscli.py)__
+It is called __[yfm-oscli.py](https://github.com/rubenafo/yfMongo/blob/master/yfm-oscli.py)__
 
 #### Database structure
 
@@ -72,7 +72,7 @@ yfm-cli goog 06/05/2013 12/05/2013   # the same but fetch the data between 6th M
 #### Load-symbols
 
 This option loads all symbols contained in the specified file as long as they are separated by spaces, commas or tabs.
-An example of file is __[dowjones](https://github.com/figurebelow/yfinanceMongo/blob/master/dowjones)__ containing all Dow Jones
+An example of file is __[dowjones](https://github.com/rubenoaf/yfMongo/blob/master/dowjones)__ containing all Dow Jones
 symbols.
 
 ```
