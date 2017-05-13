@@ -14,7 +14,7 @@
 # limitations under the License.
 
 ##
-## yFinanceMongo command line interface for OpenShift
+## yfMongo command line interface for OpenShift
 ##
 
 import sys
