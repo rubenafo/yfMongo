@@ -1,11 +1,11 @@
-#!/usr/bin/python
+#!/usr/bin/python3.5
 # 
-# Copyright 2017 Ruben Afonso, <rbfrancos@gmail.com>
+# Copyright 2017 Ruben Afonso, <http://rubenaf.com>
 # Licensed under the Apache License (see LICENSE)
 #
 
 import sys
-from yfMongo import *
+from yfMongo import yfMongo
 
 ##
 ## yfMongo command line interface
@@ -17,20 +17,19 @@ class yfm:
   # Help message when no valid options are provided
   #
   def showHelp (self):
-    print "Usage :"
-    print " yfm clear                      -- clear all content from the db"
-    print " yfm add <symbol>               -- add a symbol to the db"
-    print "     add <symbol> <date>        -- add a symbol, then fetch the date"
-    print "     add <symbol> <start> <end> -- add a symbol and fetch the period"
-    print " yfm load-symbols <file>        -- load the symbols from a file"
-    print " yfm remove <symbol>            -- remove a symbol from the db"
-    print " yfm fetch <date>               -- fetch the given date for all symbols"
-    print "     fetch <start> <end>        -- fetch data between both dates"
-    print " yfm test date                  -- test symbols fetching the given date"
-    print " yfm info                       -- print out admin info"
-    print " yfm info symbols               -- print symbols"
-    print " yfm export-json filename       -- export the content in JSON format"
-    print " yfm export-csv filename        -- export the content in CVS format"
+    print ("Usage :")
+    print (" yfm clear                      -- clear all content from the db")
+    print (" yfm clear data                 -- clear only data, keep symbols")
+    print (" yfm add <symbol>               -- add a symbol to the db")
+    print ("     add <symbol> <start> <end> -- add a symbol fetch data between dates")
+    print ("     add index <index>          -- add underlying index components")
+    print (" yfm load-symbols <file>        -- load the symbols from a file")
+    print (" yfm remove <symbol>            -- remove a symbol from the db")
+    print (" yfm fetch <start> <end>        -- fetch data between both dates")
+    print (" yfm info                       -- print out admin info")
+    print (" yfm info symbols               -- print symbols")
+    print (" yfm export-json filename       -- export the content in JSON format")
+    print (" yfm export-csv filename        -- export the content in CVS format")
 
   def __init__(self, cliParams, hostname, port, database, user, password, verbose):
     moAdmin = yfMongo(hostname=hostname, port=port, database=database, user=user, password=password, verbose=verbose)
@@ -45,18 +44,20 @@ class yfm:
       if firstParam == "clear":
         moAdmin.clear()
         exit()
-
       if firstParam == "info":
         moAdmin.info()
         exit()
 
     if numParams == 3:
       secondParam = cliParams[2]
-      if firstParam == "fetch":
-        moAdmin.fetch(secondParam)
-        exit()
       if firstParam == "add":
         moAdmin.add(secondParam)
+        exit()
+      if firstParam == "clear" and secondParam == "data":
+        moAdmin.clear(True)
+        exit()
+      if firstParam == "fetch":
+        moAdmin.fetch(secondParam)
         exit()
       if firstParam == "remove":
         moAdmin.remove (secondParam)
@@ -68,9 +69,6 @@ class yfm:
       if firstParam == "load-symbols":
         moAdmin.loadSymbols (secondParam)
         exit();
-      if firstParam == "test":
-        moAdmin.test (secondParam)
-        exit()
       if firstParam == "export-json":
         moAdmin.exportJSON (secondParam)
         exit()
@@ -78,19 +76,23 @@ class yfm:
         moAdmin.exportCSV (secondParam)
         exit()
       self.showHelp()
-
     if numParams == 4:
       if firstParam == "fetch":
         startDate = cliParams[2]
         endDate = cliParams[3]
         moAdmin.fetchInterval (startDate, endDate)
         exit()
-
       if firstParam == "add":
-        symbol = cliParams[2]
-        date = cliParams[3]
-        moAdmin.add (symbol, date)
-        exit()
+        secondParam = cliParams[2]
+        if secondParam == "index":
+          index = cliParams[3]
+          moAdmin.addIndex(index)
+          exit()
+        else:
+          symbol = cliParams[2]
+          date = cliParams[3]
+          moAdmin.add (symbol, date)
+          exit()
 
     if numParams == 5:
       if firstParam == "add":

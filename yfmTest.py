@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/python3.5
 # 
-# Copyright 2017 Ruben Afonso, <rbfrancos@gmail.com>
+# Copyright 2017 Ruben Afonso, <http://rubenaf.com>
 # Licensed under the Apache License (see LICENSE)
 #
 
@@ -31,15 +31,15 @@ class yfmTest (unittest.TestCase):
 
   # Creates some test data in the timeline
   def generateData (self):
-    self.db.symbols.insert ({'sym':"a"})
-    self.db.symbols.insert ({'sym':"b"})
-    self.db.symbols.insert ({'sym':"c"})
-    self.db.timeline.insert ({"o":2.3, "c":3.2, "d":0, "v":12000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'a'})
-    self.db.timeline.insert ({"o":2.3, "c":3.2, "d":0, "v":12000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'a'})
-    self.db.timeline.insert ({"o":3.45, "c":3.0, "d":0, "v":15000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'b'})
-    self.db.timeline.insert ({"o":10.3, "c":3.2, "d":0, "v":15000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'b'})
-    self.db.timeline.insert ({"o":2.3, "c":3.2, "d":0, "v":1000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'c'})
-    self.db.timeline.insert ({"o":2.3, "c":3.2, "d":0, "v":1000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'c'})
+    self.db.symbols.insert_one ({'sym':"a"})
+    self.db.symbols.insert_one ({'sym':"b"})
+    self.db.symbols.insert_one ({'sym':"c"})
+    self.db.timeline.insert_one ({"o":2.3, "c":3.2, "d":0, "v":12000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'a'})
+    self.db.timeline.insert_one ({"o":2.3, "c":3.2, "d":0, "v":12000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'a'})
+    self.db.timeline.insert_one ({"o":3.45, "c":3.0, "d":0, "v":15000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'b'})
+    self.db.timeline.insert_one ({"o":10.3, "c":3.2, "d":0, "v":15000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'b'})
+    self.db.timeline.insert_one ({"o":2.3, "c":3.2, "d":0, "v":1000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'c'})
+    self.db.timeline.insert_one ({"o":2.3, "c":3.2, "d":0, "v":1000, "dv":3.2, "h":4, "ac":0, "l":2.2, "sym":'c'})
 
   # Creates the empty database, but containing admin documents
   def setUp (self):
@@ -81,7 +81,7 @@ class yfmTest (unittest.TestCase):
     self.assertEqual (self.db.symbols.count(), 29)
     self.assertEqual (self.db.symbols.find({'sym':"ibm"}).count(), 0)
 
-  # Test removel of symbol and its related timeline
+  # Test removal of symbol and its related timeline
   def test_full_removal (self):
     self.generateData()
     self.assertEqual(self.db.timeline.count(), 6)

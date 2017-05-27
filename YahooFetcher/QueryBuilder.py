@@ -7,47 +7,69 @@
 # This class builds the URL using Yahoo conventions.
 #
 
+import urllib
+from datetime import datetime
+
 class Query:
 
-  HIST_BASE_URL = "http://ichart.finance.yahoo.com/table.csv?s=_SYMBOL_&a=_M1_&b=_D1_&c=_Y1_&d=_M2_&e=_D2_&f=_Y2_&g=_TYPE_&ignore=.csv"
-  BASE_URL="http://finance.yahoo.com/d/quotes.csv?s="
+  BASE_URL = "http://finance.yahoo.com/quote/AAPL"
+  HIST_URL = "https://query1.finance.yahoo.com/v7/finance/download/{}?{}";
+
+  def refreshCookie (self):
+    self.cookie = None
+    self.crub = None
+    cookier = urllib.request.HTTPCookieProcessor()
+    opener = urllib.request.build_opener(cookier)
+    urllib.request.install_opener(opener)
+    f = urllib.request.urlopen(self.BASE_URL)
+    alines = f.read().decode()
+    cs = alines.find('CrumbStore')
+    cr = alines.find('crumb', cs + 10)
+    cl = alines.find(':', cr + 5)
+    q1 = alines.find('"', cl + 1)
+    q2 = alines.find('"', q1 + 1)
+    crumb = alines[q1 + 1:q2]
+    self.crumb = crumb
+    for c in cookier.cookiejar:
+      if c.domain != '.yahoo.com':
+        continue
+      if c.name != 'B':
+        continue
+      self.cookie = c.value
 
   def __init__(self):
-    None
-
-  # Returns the url string given the attributes (as defined in yfinanceoptions.txt),
-  # and the stock symbols to fetch (e.g. GOOG for google).
-  def queryStock (self, symbols, attr):
-    baseUrl = self.BASE_URL
-    baseUrl += symbols
-    options = self.__parseAttr(attr);
-    return baseUrl + options
-
-  def __parseAttr (self, attr):
-    tokens = attr.split(",")
-    elems = "&f="
-    for str in tokens:
-      elems += str
-    return elems
+    self.refreshCookie()
 
   #
   # Historical data methods
   #
 
-  # Date params are in format dd/mm/yyyy
-  def getHist (self, symbol, startDate, endDate, type):   # type = d daily, w weekly, m monthly, v dividend
-      return self.__buildHistURL (symbol, startDate, endDate, type)
-
-  def __buildHistURL (self, symbol, startDate, endDate, type):
-    symbol_url = self.HIST_BASE_URL.replace("_SYMBOL_", symbol)
-    date1 = startDate.split("/")
-    date2 = endDate.split("/")
-    symbol_url = symbol_url.replace ("_M1_", str(int(date1[1])-1))   # first, the month -1
-    symbol_url = symbol_url.replace ("_D1_", date1[0])     # day
-    symbol_url = symbol_url.replace ("_Y1_", date1[2])     # year
-    symbol_url = symbol_url.replace ("_M2_", str(int(date2[1])-1))   # idem
-    symbol_url = symbol_url.replace ("_D2_", date2[0])
-    symbol_url = symbol_url.replace ("_Y2_", date2[2])
-    symbol_url = symbol_url.replace ("_TYPE_", type)
-    return symbol_url
-
+  # Date params are in format yyyymmdd
+  def getHistURL (self, symbol, begindate, enddate, event):
+    tb = datetime(int(begindate[0:4]), int(begindate[4:6]), int(begindate[6:8]), 0, 0)
+    te = datetime(int(enddate[0:4]), int(enddate[4:6]), int(enddate[6:8]), 0, 0)
+    param = dict()
+    param['period1'] = int(tb.timestamp())
+    param['period2'] = int(te.timestamp())
+    param['interval'] = '1d'
+    if event == 'quote':
+      param['events'] = 'history'
+    elif event == 'div':
+      param['events'] = 'div'
+    elif event == 'split':
+      param['events'] = 'split'
+    
+    for i in [1,5]:
+      try:
+        param['crumb'] = self.crumb
+        params = urllib.parse.urlencode(param)
+        url = 'https://query1.finance.yahoo.com/v7/finance/download/{}?{}'.format(symbol, params)
+        f = urllib.request.urlopen(url)
+        alines = f.readlines()
+        return [a.decode("UTF-8").strip() for a in alines[1:] if len(a) > 0]
+      except (urllib.error.HTTPError, urllib.error.URLError):
+        # this handles the spurious HTTPError unauthorized, perhaps the yahoo side didn't process the cookie
+        # so the crumb gets rejected. 5 times for this should be enough
+        self.refreshCookie()
+    print ("Warning: unable to retrieve Yahoo data for " + symbol)
+    return []

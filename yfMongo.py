@@ -1,5 +1,5 @@
 # 
-# Copyright 2017 Ruben Afonso, <rbfrancos@gmail.com>
+# Copyright 2017 Ruben Afonso, <http://rubenaf.com>
 # Licensed under the Apache License (see LICENSE)
 #
 
@@ -8,6 +8,7 @@ import re
 import csv
 import json
 from datetime import datetime, date, time
+sys.path.append("YahooFetcher")
 from YahooFetcher import *
 import ast
 from pymongo import *
@@ -23,7 +24,7 @@ class yfMongo:
   #
   def sprint (self, msg):
     if self.verbose:
-      print msg
+      print (msg)
 
   #
   # Generic function to check all user input dates
@@ -32,13 +33,13 @@ class yfMongo:
   #
   def __checkDate (self, date):
     try:
-      inputDate = datetime.strptime(date, "%d/%m/%Y")
+      inputDate = datetime.strptime(date, "%Y/%m/%d")
       currentTime = datetime.now()
       if (inputDate > currentTime):
         self.sprint ("Error: provided date (" + date + ") is in the future")
         exit()
     except ValueError:
-      self.sprint ("Error: invalid provided date format (expected dd/mm/yyyy)")
+      self.sprint ("Error: invalid provided date format (expected yyyy/mm/dd)")
       exit()
 
   #
@@ -46,9 +47,9 @@ class yfMongo:
   #
   def __getFormattedDate (self, symbol):
       try:
-        return datetime.strptime(symbol['d'], "%d/%m/%Y")
+        return datetime.strptime(symbol['date'], "%Y-%m-%d")
       except ValueError:
-        self.sprint ("Error: invalid provided date format (expected dd/mm/yyyy)")
+        self.sprint ("Error: invalid provided date format (expected yyyy/mm/dd)")
 
   #
   # Initialises the ddbb
@@ -65,15 +66,19 @@ class yfMongo:
   #
   # Removes all content in the database (Caution!)
   #
-  def clear (self):
-      self.sprint ("Removing all collections [symbols and timeline] ... done")
-      self.yfdb.timeline.remove();
-      self.yfdb.symbols.remove();
+  def clear (self, keepSymbols=False):
+      if keepSymbols:
+        self.sprint ("Removing data ... done")
+        self.yfdb.timeline.delete_many({});
+      else:
+        self.sprint ("Removing all collections [symbols and timeline] ... done")
+        self.yfdb.timeline.delete_many({});
+        self.yfdb.symbols.delete_many({});
 
   def add (self, symbol, startDate = None, endDate = None):
     exists = self.yfdb.symbols.find ({'sym':symbol}).count()
     if not exists:
-      self.yfdb.symbols.insert ({'sym':symbol});
+      self.yfdb.symbols.insert_one ({'sym':symbol});
       self.sprint ("'" + symbol + "'" + " added to the database")
     if startDate != None:
       if endDate != None:
@@ -89,8 +94,8 @@ class yfMongo:
       if not exists:
         self.sprint ("Error: symbol'" + value + "' not in the database")
       else:
-        self.yfdb.symbols.remove ({'sym':value});
-        self.yfdb.timeline.remove ({'sym':value});
+        self.yfdb.symbols.delete_many ({'sym':value});
+        self.yfdb.timeline.delete_many ({'sym':value});
         self.sprint ("'" + value + "'" + " removed from the database")
 
   #
@@ -99,16 +104,16 @@ class yfMongo:
   #
   def info (self):
     symbols = self.yfdb.symbols.find();
-    print "Timeline size: " + str(self.yfdb.timeline.find().count())
-    print "Symbols: " + str(symbols.count())
+    print ("Timeline size: " + str(self.yfdb.timeline.find().count()))
+    print ("Symbols: " + str(symbols.count()))
     dates = []
     symbols = self.yfdb.timeline.find()
     for symb in symbols:
        date = self.__getFormattedDate (symb)
        dates.append(date)
     if dates:
-      print "Oldest record: " + min(dates).strftime("%d/%m/%y")
-      print "Most recent record: " + max(dates).strftime("%d/%m/%y")
+      print ("Oldest record: " + min(dates).strftime("%Y/%m/%d"))
+      print ("Most recent record: " + max(dates).strftime("%Y/%m/%d"))
 
   #
   # Print only symbol ids
@@ -116,25 +121,7 @@ class yfMongo:
   def infoSymbols (self):
       symbols = self.yfdb.symbols.find();
       for symb in symbols:
-        print symb['sym']
-
-  #
-  # Fetches symbols for provided date.
-  # If provided symbol is not None it fetches only it, otherwise
-  # uses as symbols all available symbols in the database.
-  #
-  def fetch (self, targetDate, symbol=None):
-    self.__checkDate(targetDate)
-    yfetcher = YahooFetcher()
-    if symbol == None:
-      symbols = self.yfdb.symbols.find()
-    else:
-      symbols = self.yfdb.symbols.find({'sym': symbol})
-    for symbol in symbols:
-      data = yfetcher.getHistAsJson(symbol['sym'], targetDate, targetDate, 'd+v')
-      self.sprint ("Adding '" + targetDate + "' data for symbol '" + symbol['sym'] + "'")
-      for entry in data:
-        self.yfdb.timeline.insert(entry)
+        print (symb['sym'])
 
   #
   # Fetches symbol data for the interval between startDate and endDate
@@ -144,26 +131,26 @@ class yfMongo:
   def fetchInterval (self, startDate, endDate, symbol=None):
     date = None
     try:
-      sdate = datetime.strptime(startDate, "%d/%m/%Y")
-      edate = datetime.strptime(endDate, "%d/%m/%Y")
-      yfetcher = YahooFetcher()
-      if symbol == None:
-        symbols = self.yfdb.symbols.find()
-      else:
-        symbols = self.yfdb.symbols.find ({'sym':symbol})
-      for symbol in symbols:
-        data = yfetcher.getHistAsJson(symbol['sym'], startDate, endDate, 'd+v')
-        self.sprint ("Adding '[" + startDate +", " + endDate  + "]' data for symbol '" + symbol['sym'] + "'")
-        for entry in data:
-          self.yfdb.timeline.insert(entry)
+      sdate = datetime.strptime(startDate, "%Y/%m/%d")
+      edate = datetime.strptime(endDate, "%Y/%m/%d")
     except ValueError:
-      print "Error: invalid provided date format (expected dd/mm/yyyy)"
+      print ("Error: invalid provided date format (expected yyyy/mm/dd)")
+      return
+    yfetcher = YahooFetcher.YahooFetcher()
+    if symbol == None:
+      symbols = self.yfdb.symbols.find()
+    else:
+      symbols = self.yfdb.symbols.find ({'sym':symbol})
+    for symbol in symbols:
+      data = yfetcher.getHistAsJson(symbol['sym'], startDate.replace("/",""), endDate.replace("/",""))
+      self.sprint ("Adding '[" + startDate +", " + endDate  + "]' data for symbol '" + symbol['sym'] + "'")
+      for entry in data:
+        self.yfdb.timeline.insert_one(entry)
 
   #
   # Loads symbols from a file, separated by spaces or commas
   #
   def loadSymbols (self, sfile):
-    symbFile = open (sfile)
     symbols = [];
     lines = (line.rstrip('\n') for line in open(sfile))
     for line in lines:
@@ -172,22 +159,6 @@ class yfMongo:
       values = filter (None, values)
       for value in values:
         self.add (value)
-
-  #
-  # Fetchs the data for all symbols for the provided date. The aim is to detect invalid
-  # symbols so it is up to the user to define a date when the market is known to have
-  # data.
-  #
-  def test (self, testdate):
-    self.__checkDate(testdate)
-    yfetcher = YahooFetcher()
-    symbols = self.yfdb.symbols.find()
-    for symbol in symbols:
-      data = yfetcher.getHistAsJson(symbol['sym'], testdate, testdate, 'd+v')
-      if len(data) == 0:
-        self.sprint ("Warning '" + symbol['sym'] +"',  no data found in '" + testdate + "'")
-      else:
-        self.sprint ("Data found for '" + symbol['sym'] + "', in '" + testdate + "'")
 
   #
   # Exports the timeline content to the given filename in JSON format
@@ -215,3 +186,9 @@ class yfMongo:
       for symb in symbols:
         w.writerow(symb)
       exportFile.close()
+
+  def addIndex (self, indexName):
+    yfetcher = YahooFetcher.YahooFetcher()
+    components = yfetcher.getComponents(indexName)
+    for component in components:
+      self.add(component)
