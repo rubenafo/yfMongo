@@ -27,7 +27,7 @@ class yfm:
     print (" yfm remove <symbol>            -- remove a symbol from the db")
     print (" yfm fetch <start> <end>        -- fetch data between both dates")
     print (" yfm info                       -- print out admin info")
-    print (" yfm info symbols               -- print symbols")
+    print (" yfm show <symbol>              -- shows the data for a symbol")
     print (" yfm export-json filename       -- export the content in JSON format")
     print (" yfm export-csv filename        -- export the content in CVS format")
 
@@ -62,10 +62,6 @@ class yfm:
       if firstParam == "remove":
         moAdmin.remove (secondParam)
         exit()
-      if firstParam == "info":
-        if secondParam == "symbols":
-          moAdmin.infoSymbols ()
-          exit()
       if firstParam == "load-symbols":
         moAdmin.loadSymbols (secondParam)
         exit();
@@ -74,6 +70,12 @@ class yfm:
         exit()
       if firstParam == "export-csv":
         moAdmin.exportCSV (secondParam)
+        exit()
+      if firstParam == "show":
+        entries = moAdmin.show(secondParam)
+        for entry in entries:
+          entry.pop("_id", None)
+          print (entry)
         exit()
       self.showHelp()
     if numParams == 4:

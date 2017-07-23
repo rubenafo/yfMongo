@@ -104,6 +104,8 @@ class yfMongo:
   #
   def info (self):
     symbols = self.yfdb.symbols.find();
+    for symb in symbols:   
+      print (symb['sym'])
     print ("Timeline size: " + str(self.yfdb.timeline.find().count()))
     print ("Symbols: " + str(symbols.count()))
     dates = []
@@ -114,14 +116,6 @@ class yfMongo:
     if dates:
       print ("Oldest record: " + min(dates).strftime("%Y/%m/%d"))
       print ("Most recent record: " + max(dates).strftime("%Y/%m/%d"))
-
-  #
-  # Print only symbol ids
-  #
-  def infoSymbols (self):
-      symbols = self.yfdb.symbols.find();
-      for symb in symbols:
-        print (symb['sym'])
 
   #
   # Fetches symbol data for the interval between startDate and endDate
@@ -192,3 +186,7 @@ class yfMongo:
     components = yfetcher.getComponents(indexName)
     for component in components:
       self.add(component)
+
+  def show (self, symbol):
+    symbols = self.yfdb.timeline.find({'ticker': symbol})
+    return symbols
