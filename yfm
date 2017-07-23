@@ -29,7 +29,7 @@ class yfm:
     print (" yfm info                       -- print out admin info")
     print (" yfm show <symbol>              -- shows the data for a symbol")
     print (" yfm export-json filename       -- export the content in JSON format")
-    print (" yfm export-csv filename        -- export the content in CVS format")
+    print (" yfm export-csv filename        -- export the content in CSV format")
 
   def __init__(self, cliParams, hostname, port, database, user, password, verbose):
     moAdmin = yfMongo(hostname=hostname, port=port, database=database, user=user, password=password, verbose=verbose)
