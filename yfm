@@ -72,10 +72,8 @@ class yfm:
         moAdmin.exportCSV (secondParam)
         exit()
       if firstParam == "show":
-        entries = moAdmin.show(secondParam)
-        for entry in entries:
-          entry.pop("_id", None)
-          print (entry)
+        entries = moAdmin.getTicker(secondParam)
+        print (entries)
         exit()
       self.showHelp()
     if numParams == 4:

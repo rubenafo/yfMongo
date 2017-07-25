@@ -54,7 +54,7 @@ class yfMongo:
   #
   # Initialises the ddbb
   #
-  def __init__(self, user=None, password=None, hostname="localhost", port=27017, database="admin", verbose=True):
+  def __init__(self, user="admin", password="", hostname="localhost", port=27017, database="yfmongo", verbose=True):
     userAndPass = ""
     if user and password:
       userAndPass = user + ":" + str(password) + "@"
@@ -187,6 +187,10 @@ class yfMongo:
     for component in components:
       self.add(component)
 
-  def show (self, symbol):
+  def getTicker (self, symbol):
     symbols = self.yfdb.timeline.find({'ticker': symbol})
-    return symbols
+    cleanSymbols = []
+    for s in symbols:
+      s["date"] = datetime.strptime(s["date"], "%Y-%m-%d")
+      cleanSymbols.append(s)
+    return cleanSymbols
