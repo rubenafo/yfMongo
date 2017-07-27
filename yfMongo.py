@@ -118,6 +118,16 @@ class yfMongo:
       print ("Most recent record: " + max(dates).strftime("%Y/%m/%d"))
 
   #
+  # Updates the database fetching data for all symbols since last 
+  # date in the data until today
+  #
+  def update (self):
+    symbols = self.yfdb.timeline.find()
+    oldestDate = max(map (lambda s: self.__getFormattedDate(s), symbols))
+    if oldestDate is not None:
+      self.fetchInterval (oldestDate.strftime("%Y/%m/%d"), date.today().strftime("%Y/%m/%d"))
+
+  #
   # Fetches symbol data for the interval between startDate and endDate
   # If the symbol is not None, all symbols found in the database are
   # updated.

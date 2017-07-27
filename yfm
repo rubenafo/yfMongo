@@ -26,6 +26,7 @@ class yfm:
     print (" yfm load-symbols <file>        -- load the symbols from a file")
     print (" yfm remove <symbol>            -- remove a symbol from the db")
     print (" yfm fetch <start> <end>        -- fetch data between both dates")
+    print (" yfm update                     -- fetch data since last date until today")
     print (" yfm info                       -- print out admin info")
     print (" yfm show <symbol>              -- shows the data for a symbol")
     print (" yfm export-json filename       -- export the content in JSON format")
@@ -47,7 +48,9 @@ class yfm:
       if firstParam == "info":
         moAdmin.info()
         exit()
-
+      if firstParam == "update":
+        moAdmin.update()
+        exit()
     if numParams == 3:
       secondParam = cliParams[2]
       if firstParam == "add":
