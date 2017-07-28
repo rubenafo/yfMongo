@@ -40,7 +40,7 @@ Usage:
  yfm show <ticker>              -- shows the data for a ticker
 ```
 
-#### Usage
+#### Some examples
 ```
 yfm add goog                        # add the 'goog' ticker to the database
 yfm add mse  06/05/2013 12/05/2013  # add mse and fetch the data between 6th May 2013 and 12th May 2013.
