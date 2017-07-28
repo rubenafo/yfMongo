@@ -8,7 +8,8 @@ The API access is handled by means of __[YahooFetcher](http://www.github.com/rub
 ### Features
 * Retrieve stock data from Yahoo Finance using Yahoo tickers
 * Store tickers locally in MongoDb
-* Update the content daily
+* Retrieve some indexes constituent data
+* Update tickers data daily
 * Fetch by date range
 * Export the data to JSON and CSV
 
