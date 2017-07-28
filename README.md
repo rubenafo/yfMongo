@@ -2,6 +2,7 @@ yfMongo
 ==============
 
 yfMongo is a simple command line app to store and manage Yahoo Finance stock data in a MongoDb database.   
+It allows you to build a local corpus of stock data that can be reused and updated easily wihout having to be constantly online.     
 The API access is handled by means of __[YahooFetcher](http://www.github.com/rubenafo/YahooFetcher)__ .
 
 ### Features
@@ -14,7 +15,7 @@ The API access is handled by means of __[YahooFetcher](http://www.github.com/rub
 ### Requirements
 * Python v2.6 at least
 * Pymongo python module
-* a running MongoDb 
+* a running MongoDb instance
 
 #### Database structure
 
