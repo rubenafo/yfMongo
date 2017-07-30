@@ -122,10 +122,19 @@ class yfMongo:
   # date in the data until today
   #
   def update (self):
-    symbols = self.yfdb.timeline.find()
-    oldestDate = max(map (lambda s: self.__getFormattedDate(s), symbols))
-    if oldestDate is not None:
-      self.fetchInterval (oldestDate.strftime("%Y/%m/%d"), date.today().strftime("%Y/%m/%d"))
+    tickers = self.yfdb.symbols.find()
+    for ticker in tickers:
+      tickerTimeline = list(self.yfdb.timeline.find({'ticker':ticker["sym"]}))
+      if len(tickerTimeline) > 0:
+        oldestDate = max(map (lambda s: self.__getFormattedDate(s), tickerTimeline))
+        if oldestDate is not None:
+          self.fetchInterval (oldestDate.strftime("%Y/%m/%d"), 
+                              date.today().strftime("%Y/%m/%d"),
+                              symbol=ticker["sym"])
+      else:
+          self.fetchInterval("2000/01/01",
+                             date.today().strftime("%Y/%m/%d"),
+                             symbol=ticker["sym"]) 
 
   #
   # Fetches symbol data for the interval between startDate and endDate
@@ -147,9 +156,10 @@ class yfMongo:
       symbols = self.yfdb.symbols.find ({'sym':symbol})
     for symbol in symbols:
       data = yfetcher.getHistAsJson(symbol['sym'], startDate.replace("/",""), endDate.replace("/",""))
-      self.sprint ("Adding '[" + startDate +", " + endDate  + "]' data for symbol '" + symbol['sym'] + "'")
-      for entry in data:
-        self.yfdb.timeline.insert_one(entry)
+      self.sprint ("Adding '[" + startDate +", " + endDate  + "]' data for symbol '" 
+        + symbol['sym'] + "' (" + str(len(data)) + " entries)")
+      if len(data) > 0:
+        self.yfdb.timeline.insert(data)
 
   #
   # Loads symbols from a file, separated by spaces or commas
