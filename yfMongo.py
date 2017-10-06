@@ -212,5 +212,6 @@ class yfMongo:
     cleanSymbols = []
     for s in symbols:
       s["date"] = datetime.strptime(s["date"], "%Y-%m-%d")
+      del s["_id"]
       cleanSymbols.append(s)
     return cleanSymbols
