@@ -7,7 +7,7 @@ setup(
   author = 'Ruben Afonso',
   author_email = 'rbfrancos@gmail.com',
   url = 'https://github.com/rubenafo/yfMongo', 
-  download_url = 'https://github.com/rubenafo/yfMongo/archive/1.0.zip'
+  download_url = 'https://github.com/rubenafo/yfMongo/archive/1.0.zip',
   keywords = ['yahoo-finance', 'mongodb', 'finance','stock'],
   classifiers = [],
 )
