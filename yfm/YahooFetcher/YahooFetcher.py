@@ -4,8 +4,8 @@
 #
 
 import csv
-from QueryBuilder import *
-from ComponentsExtractor import ComponentsExtractor
+from .QueryBuilder import QueryBuilder
+from .ComponentsExtractor import ComponentsExtractor
 from urllib3 import *
 import urllib
 
@@ -17,7 +17,7 @@ import urllib
 class YahooFetcher:
 
   def __init__(self):
-    self.query = Query ()
+    self.query = QueryBuilder ()
 
   #
   # Gets historical data in json format.

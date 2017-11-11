@@ -9,7 +9,8 @@ import csv
 import json
 from datetime import datetime, date, time
 sys.path.append("YahooFetcher")
-from YahooFetcher import *
+from .YahooFetcher import YahooFetcher
+from .YahooFetcher import QueryBuilder
 import ast
 from pymongo import *
 

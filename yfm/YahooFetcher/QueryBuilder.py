@@ -10,7 +10,7 @@
 import urllib
 from datetime import datetime
 
-class Query:
+class QueryBuilder:
 
   BASE_URL = "http://finance.yahoo.com/quote/AAPL"
   HIST_URL = "https://query1.finance.yahoo.com/v7/finance/download/{}?{}";
