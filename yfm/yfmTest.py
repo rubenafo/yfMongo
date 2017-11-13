@@ -1,4 +1,4 @@
-#!/usr/bin/python3.5
+#!/usr/bin/python
 # 
 # Copyright 2017 Ruben Afonso, <http://rubenaf.com>
 # Licensed under the Apache License (see LICENSE)

@@ -4,8 +4,8 @@
 #
 
 import csv
-from .QueryBuilder import QueryBuilder
-from .ComponentsExtractor import ComponentsExtractor
+from QueryBuilder import QueryBuilder
+from ComponentsExtractor import ComponentsExtractor
 from urllib3 import *
 import urllib
 

@@ -1,16 +1,17 @@
+#!/usr/bin/python
 # 
 # Copyright 2017 Ruben Afonso, <http://rubenaf.com>
 # Licensed under the Apache License (see LICENSE)
 #
 
-import sys
+import sys,os
 import re
 import csv
 import json
 from datetime import datetime, date, time
-sys.path.append("YahooFetcher")
-from .YahooFetcher import YahooFetcher
-from .YahooFetcher import QueryBuilder
+sys.path.append(os.path.join(os.path.dirname(__file__), "YahooFetcher"))
+from YahooFetcher import YahooFetcher
+from YahooFetcher import QueryBuilder
 import ast
 from pymongo import *
 
@@ -150,7 +151,7 @@ class yfMongo:
     except ValueError:
       print ("Error: invalid provided date format (expected yyyy/mm/dd)")
       return
-    yfetcher = YahooFetcher.YahooFetcher()
+    yfetcher = YahooFetcher()
     if symbol == None:
       symbols = self.yfdb.symbols.find()
     else:
@@ -203,7 +204,7 @@ class yfMongo:
       exportFile.close()
 
   def addIndex (self, indexName):
-    yfetcher = YahooFetcher.YahooFetcher()
+    yfetcher = YahooFetcher()
     components = yfetcher.getComponents(indexName)
     for component in components:
       self.add(component)

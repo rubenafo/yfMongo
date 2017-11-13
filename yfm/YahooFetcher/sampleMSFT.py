@@ -1,4 +1,4 @@
-#!/usr/bin/python3.5
+#!/usr/bin/python3.6
 
 #
 # Copyright 2017, Ruben Afonso - http://www.github.com/rubenafo

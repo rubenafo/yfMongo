@@ -1,1 +1,1 @@
-from .yfMongo import yfMongo
+from yfm.yfMongo import yfMongo as fetcher
