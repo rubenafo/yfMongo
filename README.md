@@ -1,9 +1,15 @@
+[![PyPI version](https://badge.fury.io/py/yfm.svg)](https://badge.fury.io/py/yfm)   
 yfMongo
 ==============
 
 yfMongo is a simple command line app to store and manage Yahoo Finance stock data in a MongoDb database.   
 It allows you to build a local corpus of stock data that can be reused and updated easily wihout having to be constantly online.     
-The API access is handled by means of __[YahooFetcher](http://www.github.com/rubenafo/YahooFetcher)__ .
+The API access is handled using __[YahooFetcher](http://www.github.com/rubenafo/YahooFetcher)__ .
+
+### Install ###
+```
+pip install yfm
+```
 
 ### Features
 * Retrieve stock data from Yahoo Finance using Yahoo tickers
@@ -27,22 +33,8 @@ Inside this database, two collections contain all the data:
 
 ### Usage
 
-```
-Usage:
- yfm clear                      -- clear all content from the db
- yfm clear data                 -- clear only data, keep tickers
- yfm add <ticker>               -- add a ticker to the db
-     add <ticker> <start> <end> -- add a ticker and fetch the period
-     add index <index>          -- add underlying index components
- yfm load-symbols <file>        -- load the tickers from a file
- yfm remove <ticker>            -- remove a ticker from the db
- yfm fetch <start> <end>        -- fetch data between both dates
- yfm update                     -- retrieve data since last update until today
- yfm info                       -- print out admin info
- yfm show <ticker>              -- shows the data for a ticker
-```
+_yfm_ can be used as a command line tool to load symbols into the mongodb database or directly as a python module:
 
-#### Some examples
 ```
 yfm add goog                        # add the 'goog' ticker to the database
 yfm add mse  06/05/2013 12/05/2013  # add mse and fetch the data between 6th May 2013 and 12th May 2013.
@@ -50,6 +42,13 @@ yfm add index ftse                  # add the tickers for the index FTSE
 yfm remove goog                     # removes GOOG from the db, ticker and timeline info
 yfm update                          # for each ticker retrieve data since last day until today
 yfm show mse                        # displays mse content
+```
+Directly from within python, tipycally to read from the database
+```
+import yfm
+fetcher = yfm.fetcher()
+fetcher.getTicker("goog")  # read from the db
+fetcher.update() # same as 'yfm update'
 ```
 
 ### Openshift integration
