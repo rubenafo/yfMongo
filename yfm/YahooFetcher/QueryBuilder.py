@@ -1,5 +1,5 @@
 #
-# Copyright 2017, Ruben Afonso - http://www.github.com/rubenafo
+# Copyright 2020, Ruben Afonso - http://www.github.com/rubenafo
 # Licensed under the Apache License (see the LICENSE file)
 #
 
@@ -8,6 +8,7 @@
 #
 
 import urllib
+import urllib.request as request
 from datetime import datetime
 
 class QueryBuilder:
@@ -18,10 +19,10 @@ class QueryBuilder:
   def refreshCookie (self):
     self.cookie = None
     self.crub = None
-    cookier = urllib.request.HTTPCookieProcessor()
-    opener = urllib.request.build_opener(cookier)
-    urllib.request.install_opener(opener)
-    f = urllib.request.urlopen(self.BASE_URL)
+    cookier = request.HTTPCookieProcessor()
+    opener = request.build_opener(cookier)
+    request.install_opener(opener)
+    f = request.urlopen(self.BASE_URL)
     alines = f.read().decode()
     cs = alines.find('CrumbStore')
     cr = alines.find('crumb', cs + 10)
@@ -64,7 +65,7 @@ class QueryBuilder:
         param['crumb'] = self.crumb
         params = urllib.parse.urlencode(param)
         url = 'https://query1.finance.yahoo.com/v7/finance/download/{}?{}'.format(symbol, params)
-        f = urllib.request.urlopen(url)
+        f = request.urlopen(url)
         alines = f.readlines()
         return [a.decode("UTF-8").strip() for a in alines[1:] if len(a) > 0]
       except (urllib.error.HTTPError, urllib.error.URLError):

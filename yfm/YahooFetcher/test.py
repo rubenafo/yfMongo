@@ -1,7 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 #
-# Copyright 2017, Ruben Afonso - http://www.github.com/rubenafo
+# Copyright 2020, Ruben Afonso - http://www.github.com/rubenafo
 # Licensed under the Apache License (see the LICENSE file)
 #
 
