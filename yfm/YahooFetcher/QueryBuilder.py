@@ -23,7 +23,7 @@ class QueryBuilder:
     opener = request.build_opener(cookier)
     request.install_opener(opener)
     f = request.urlopen(self.BASE_URL)
-    alines = f.read().decode()
+    alines = f.read().decode(encoding="iso-8859-1") # Necessary Adjustment to YahooFinance , Request = get it done with 'yfinance' instead of this hard working fetcher. 
     cs = alines.find('CrumbStore')
     cr = alines.find('crumb', cs + 10)
     cl = alines.find(':', cr + 5)
